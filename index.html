@@ -135,35 +135,50 @@
 
   
     <script>
-    // 1. Corrected URL to connect securely to Binance's live mini-ticker stream
-    const ws = new WebSocket('wss://://binance.com');
+    let ws;
 
-    // Visual confirmation in your console when it securely connects
-    ws.onopen = () => {
-      console.log("Connected directly to Binance live stream feed!");
-    };
+    function connectBinance() {
+      // Direct, secure connection to Binance's raw transaction feed
+      ws = new WebSocket('wss://://binance.com');
 
-    ws.onmessage = (event) => {
-      const payload = JSON.parse(event.data);
-      
-      // The 'miniTicker' stream uses 'c' for the most recent closing price
-      if (payload.c) {
-        const usdPrice = parseFloat(payload.c);
-        const inrPrice = usdPrice * 83; // Your fixed USD to INR multiplier
-        
-        // Updates the UI text element seamlessly in real-time
-        document.getElementById('btcPrice').innerText = 
-          `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
-      }
-    };
+      ws.onopen = () => {
+        console.log("Connected to Binance!");
+        document.getElementById('btcPrice').style.color = "#eaac30";
+      };
 
-    // Auto-reconnect safety layer if the mobile network fluctuates
-    ws.onclose = () => {
-      console.log("Stream disconnected. Retrying in 3 seconds...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
-    };
+      ws.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          
+          // Fallback parsing engine ensuring the data exists before updating UI
+          const priceValue = payload.c || payload.p || null;
+          
+          if (priceValue) {
+            const usdPrice = parseFloat(priceValue);
+            const inrPrice = usdPrice * 83; // Fixed conversion multiplier
+            
+            // Updates text node seamlessly in local Indian currency grouping rules
+            document.getElementById('btcPrice').innerText = 
+              `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
+          }
+        } catch (error) {
+          console.error("Data parse failure:", error);
+        }
+      };
+
+      // If mobile signal drops, visually flag the error text instead of freezing
+      ws.onerror = (err) => {
+        document.getElementById('btcPrice').innerText = "Connection Error. Retrying...";
+        document.getElementById('btcPrice').style.color = "#da3633";
+      };
+
+      ws.onclose = () => {
+        setTimeout(connectBinance, 3000);
+      };
+    }
+
+    // Initialize connection stream immediately on page load
+    connectBinance();
 
     function executeOrder() {
       alert("Order button works! This interface is now ready to wire to your local Android backend paths.");
