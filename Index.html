@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sejal's Crypto Simulator</title>
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --text-main: #c9d1d9;
+      --green: #238636;
+      --red: #da3633;
+      --accent: #58a6ff;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 15px;
+    }
+    .header {
+      text-align: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #30363d;
+    }
+    .balance-card {
+      background-color: var(--card-bg);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0;
+      text-align: center;
+    }
+    .balance-amount {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--accent);
+      margin-top: 5px;
+    }
+    .ticker-box {
+      background: #21262d;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      text-align: center;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--accent);
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+      color: white;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--green);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:active {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>📈 Sejal's Trading Dashboard</h2>
+  </div>
+
+  <div class="balance-card">
+    <div>Virtual Balance (INR)</div>
+    <div id="balanceView" class="balance-amount">₹10,00,000.00</div>
+  </div>
+
+  <div class="ticker-box">
+    📊 Live Feed (Binance Stream):<br>
+    <strong id="btcPrice" style="color: #eaac30; font-size: 18px;">Connecting...</strong>
+  </div>
+
+  <div style="background-color: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid #30363d;">
+    <h3 style="margin-top:0;">Open Execution Order</h3>
+    
+    <div class="form-group">
+      <label>Trading Pair</label>
+      <select id="tradeSymbol">
+        <option value="BTCUSDT">BTC / USDT (Bitcoin)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Position Type</label>
+      <select id="tradeSide">
+        <option value="LONG">LONG (Buy / Bullish)</option>
+        <option value="SHORT">SHORT (Sell / Bearish)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Leverage Multiplier</label>
+      <select id="tradeLeverage">
+        <option value="1">1x (No Leverage)</option>
+        <option value="5">5x Leverage</option>
+        <option value="10">10x Leverage</option>
+        <option value="20">20x Leverage</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Margin Amount (INR ₹)</label>
+      <input type="number" id="tradeMargin" value="10000" min="500">
+    </div>
+
+    <button type="button" onclick="executeOrder()">Submit Live Market Order</button>
+  </div>
+
+  <script>
+    // Establishes connection to the public streaming feed directly from the client side
+    const ws = new WebSocket('wss://://binance.com');
+
+    ws.onmessage = (event) => {
+      const payload = JSON.parse(event.data);
+      if (payload.e === '24hrTicker') {
+        const usdPrice = parseFloat(payload.c);
+        const inrPrice = usdPrice * 83;
+        document.getElementById('btcPrice').innerText = `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
+      }
+    };
+
+    function executeOrder() {
+      alert("Order button works! This interface is now ready to wire to your local Android backend paths.");
+    }
+  </script>
+</body>
+</html>
