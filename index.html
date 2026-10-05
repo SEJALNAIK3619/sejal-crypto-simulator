@@ -132,6 +132,27 @@
 
     <button type="button" onclick="executeOrder()">Submit Live Market Order</button>
   </div>
+    <!-- Dynamic Open Positions Tracking Container -->
+  <div style="background-color: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid #30363d; margin-top: 20px;">
+    <h3 style="margin-top:0; border-bottom: 1px solid #30363d; padding-bottom: 8px;">💼 Active Open Positions</h3>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+        <thead>
+          <tr style="border-bottom: 1px solid #30363d; color: #8b949e;">
+            <th style="padding: 8px 4px;">Type</th>
+            <th style="padding: 8px 4px;">Margin</th>
+            <th style="padding: 8px 4px;">Leverage</th>
+            <th style="padding: 8px 4px;">Entry Price</th>
+            <th style="padding: 8px 4px;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="positionsTableBody">
+          <!-- Dynamically generated rows will appear here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 
         <script>
     // Fail-safe real-time fetching engine that runs everywhere seamlessly
