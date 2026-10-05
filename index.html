@@ -132,7 +132,8 @@
 
     <button type="button" onclick="executeOrder()">Submit Live Market Order</button>
   </div>
-    <!-- Dynamic Open Positions Tracking Container -->
+
+  <!-- Dynamic Open Positions Tracking Container -->
   <div style="background-color: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid #30363d; margin-top: 20px;">
     <h3 style="margin-top:0; border-bottom: 1px solid #30363d; padding-bottom: 8px;">💼 Active Open Positions</h3>
     <div style="overflow-x: auto;">
@@ -152,7 +153,8 @@
       </table>
     </div>
   </div>
-    <script>
+
+  <script>
     // Explicitly define global price state values
     let currentUsdPrice = 0;
     let currentInrPrice = 0;
@@ -165,7 +167,7 @@
         
         const data = await response.json();
         currentUsdPrice = parseFloat(data.price);
-        currentInrPrice = currentUsdPrice * 83; // Your fixed conversion multiplier
+        currentInrPrice = currentUsdPrice * 83; // Fixed conversion multiplier
 
         // Map the network variables back to your original html dashboard id
         const priceLabel = document.getElementById('btcPrice');
