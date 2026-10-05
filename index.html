@@ -152,40 +152,106 @@
       </table>
     </div>
   </div>
+  <script>
+    let currentUsdPrice = 0;
+    let currentInrPrice = 0;
 
-
-        <script>
-    // Fail-safe real-time fetching engine that runs everywhere seamlessly
+    // 1. Fetch live market prices every 2 seconds
     async function fetchLivePrice() {
       try {
-        // Query Binance's highly available public API gateway directly
-        const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
-        
-        if (!response.ok) throw new Error('Network error fetching market price');
+        const response = await fetch('https://binance.com');
+        if (!response.ok) throw new Error('Network error');
         
         const data = await response.json();
-        const usdPrice = parseFloat(data.price);
-        const inrPrice = usdPrice * 83; // Fixed currency conversion factor
+        currentUsdPrice = parseFloat(data.price);
+        currentInrPrice = currentUsdPrice * 83; // Fixed currency factor
 
-        // Safely update the dashboard display elements 
         document.getElementById('btcPrice').style.color = "#eaac30";
         document.getElementById('btcPrice').innerText = 
-          `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
+          `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
           
       } catch (error) {
         console.error("Price retrieval error:", error);
-        document.getElementById('btcPrice').innerText = "Re-establishing line connection...";
-        document.getElementById('btcPrice').style.color = "#da3633";
       }
     }
 
-    // Initialize immediately on load, then pulse and update every 2 seconds
+    // 2. Logic to execute a trade and save it securely in localStorage
+    function executeOrder() {
+      if (currentInrPrice === 0) {
+        alert("Waiting for live data feed. Please try again in a moment.");
+        return;
+      }
+
+      const side = document.getElementById('tradeSide').value;
+      const leverage = document.getElementById('tradeLeverage').value;
+      const margin = parseFloat(document.getElementById('tradeMargin').value);
+
+      // Simple validation check
+      if (isNaN(margin) || margin <= 0) {
+        alert("Please enter a valid margin amount.");
+        return;
+      }
+
+      // Create a unique new trade data object
+      const newTrade = {
+        id: Date.now(),
+        symbol: "BTCUSDT",
+        side: side,
+        leverage: leverage + "x",
+        margin: margin,
+        entryPrice: currentInrPrice
+      };
+
+      // Pull current saved trades, attach the new one, and update browser storage
+      let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      positions.push(newTrade);
+      localStorage.setItem('openPositions', JSON.stringify(positions));
+
+      // Refresh the table grid and trigger a success response
+      renderPositionsTable();
+      alert(`Successfully opened a ${side} market position! Saved to browser memory.`);
+    }
+
+    // 3. Render the stored active positions into the HTML layout table
+    function renderPositionsTable() {
+      const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      const tableBody = document.getElementById('positionsTableBody');
+      
+      if (positions.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#8b949e; padding:15px;">No active open positions</td></tr>`;
+        return;
+      }
+
+      tableBody.innerHTML = positions.map(trade => {
+        const sideColor = trade.side === 'LONG' ? 'var(--green)' : 'var(--red)';
+        return `
+          <tr style="border-bottom: 1px solid #21262d;">
+            <td style="padding: 10px 4px; font-weight:bold; color:${sideColor}">${trade.side}</td>
+            <td style="padding: 10px 4px;">₹${trade.margin.toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 4px; color:#8b949e;">${trade.leverage}</td>
+            <td style="padding: 10px 4px;">₹${trade.entryPrice.toLocaleString('en-IN', {maximumFractionDigits:2})}</td>
+            <td style="padding: 10px 4px;">
+              <button onclick="closePosition(${trade.id})" style="padding:4px 8px; font-size:12px; background-color:var(--red); margin:0; width:auto;">Close</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 4. Close a position and wipe it from browser localStorage
+    function closePosition(tradeId) {
+      let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      positions = positions.filter(trade => trade.id !== tradeId);
+      localStorage.setItem('openPositions', JSON.stringify(positions));
+      
+      renderPositionsTable();
+      alert("Position settled and closed successfully!");
+    }
+
+    // Run setup items immediately on page startup
     fetchLivePrice();
     setInterval(fetchLivePrice, 2000);
-
-    function executeOrder() {
-      alert("Order button works! This interface is now ready to wire to your local Android backend paths.");
-    }
+    renderPositionsTable();
   </script>
 </body>
 </html>
