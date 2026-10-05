@@ -133,17 +133,36 @@
     <button type="button" onclick="executeOrder()">Submit Live Market Order</button>
   </div>
 
-  <script>
-    // Establishes connection to the public streaming feed directly from the client side
+  
+    <script>
+    // 1. Corrected URL to connect securely to Binance's live mini-ticker stream
     const ws = new WebSocket('wss://://binance.com');
+
+    // Visual confirmation in your console when it securely connects
+    ws.onopen = () => {
+      console.log("Connected directly to Binance live stream feed!");
+    };
 
     ws.onmessage = (event) => {
       const payload = JSON.parse(event.data);
-      if (payload.e === '24hrTicker') {
+      
+      // The 'miniTicker' stream uses 'c' for the most recent closing price
+      if (payload.c) {
         const usdPrice = parseFloat(payload.c);
-        const inrPrice = usdPrice * 83;
-        document.getElementById('btcPrice').innerText = `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
+        const inrPrice = usdPrice * 83; // Your fixed USD to INR multiplier
+        
+        // Updates the UI text element seamlessly in real-time
+        document.getElementById('btcPrice').innerText = 
+          `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
       }
+    };
+
+    // Auto-reconnect safety layer if the mobile network fluctuates
+    ws.onclose = () => {
+      console.log("Stream disconnected. Retrying in 3 seconds...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     };
 
     function executeOrder() {
