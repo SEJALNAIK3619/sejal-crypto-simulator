@@ -93,7 +93,7 @@
   </div>
 
   <div class="ticker-box">
-    📊 Live Feed (Binance Stream):<br>
+    📊 Live Feed (Simulated Stream):<br>
     <strong id="btcPrice" style="color: #eaac30; font-size: 18px;">Connecting...</strong>
   </div>
 
@@ -134,33 +134,30 @@
   </div>
 
   <script>
-    // Stable high-frequency fetching loop that runs everywhere seamlessly
-    async function fetchLivePrice() {
-      try {
-        // Query Binance's public ticker gateway directly
-        const response = await fetch('https://binance.com');
-        
-        if (!response.ok) throw new Error('Network error fetching market price');
-        
-        const data = await response.json();
-        const usdPrice = parseFloat(data.price);
-        const inrPrice = usdPrice * 83; // Fixed currency conversion factor
+    // Initialize price matching the current international value levels
+    let currentUsdPrice = 86250.00;
+    let currentInrPrice = currentUsdPrice * 83;
 
-        // Update the dashboard indicator display 
-        document.getElementById('btcPrice').style.color = "#eaac30";
-        document.getElementById('btcPrice').innerText = 
-          `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
-          
+    // High-frequency simulator that changes numbers locally to bypass network blocks
+    function simulateLivePrice() {
+      try {
+        const percentChange = (Math.random() - 0.5) * 0.001;
+        currentUsdPrice = currentUsdPrice * (1 + percentChange);
+        currentInrPrice = currentUsdPrice * 83;
+
+        const priceLabel = document.getElementById('btcPrice');
+        if (priceLabel) {
+          priceLabel.style.color = "#eaac30";
+          priceLabel.innerText = `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
+        }
       } catch (error) {
-        console.error("Price retrieval error:", error);
-        document.getElementById('btcPrice').innerText = "Re-establishing line connection...";
-        document.getElementById('btcPrice').style.color = "#da3633";
+        console.error("Simulation error:", error);
       }
     }
 
-    // Initialize immediately on load, then pulse and update every 2 seconds
-    fetchLivePrice();
-    setInterval(fetchLivePrice, 2000);
+    // Initialize the tick loop immediately on launch context
+    simulateLivePrice();
+    setInterval(simulateLivePrice, 1000); // Triggers updates smoothly every 1 second
 
     function executeOrder() {
       alert("Order button works! This interface is now ready to wire to your local Android backend paths.");
