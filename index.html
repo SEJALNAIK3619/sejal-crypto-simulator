@@ -154,39 +154,50 @@
     </div>
   </div>
 
-  <script>
-    // Explicitly define global price state values
+    <script>
+    // Global price state tracking containers
     let currentUsdPrice = 0;
     let currentInrPrice = 0;
 
-    // 1. Unified high-frequency data engine to update the UI text node
-    async function fetchLivePrice() {
-      try {
-        const response = await fetch('https://binance.com');
-        if (!response.ok) throw new Error('API server unreachable');
-        
-        const data = await response.json();
-        currentUsdPrice = parseFloat(data.price);
-        currentInrPrice = currentUsdPrice * 83; // Fixed conversion multiplier
+    // Fail-safe endpoint array containing official secondary network links
+    const backupEndpoints = [
+      'https://binance.com',
+      'https://binance.vision',
+      'https://binance.com'
+    ];
 
-        // Map the network variables back to your original html dashboard id
-        const priceLabel = document.getElementById('btcPrice');
-        if (priceLabel) {
-          priceLabel.style.color = "#eaac30";
-          priceLabel.innerText = `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
-        }
+    async function fetchLivePrice() {
+      // Loop through backup pathways until one answers successfully
+      for (let url of backupEndpoints) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) continue; // If an endpoint is blocked, skip to the next
           
-      } catch (error) {
-        console.error("Live loop drop:", error);
-        const priceLabel = document.getElementById('btcPrice');
-        if (priceLabel && priceLabel.innerText === "Connecting...") {
-          priceLabel.innerText = "Re-establishing feed link...";
-          priceLabel.style.color = "#da3633";
+          const data = await response.json();
+          currentUsdPrice = parseFloat(data.price);
+          currentInrPrice = currentUsdPrice * 83; // Fixed FX multiplier
+
+          const priceLabel = document.getElementById('btcPrice');
+          if (priceLabel) {
+            priceLabel.style.color = "#eaac30";
+            priceLabel.innerText = `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
+          }
+          return; // Route success! Exit loop early.
+            
+        } catch (error) {
+          console.warn(`Path failed: ${url}`, error);
         }
+      }
+
+      // Fallback screen string message if all international routes drop
+      const priceLabel = document.getElementById('btcPrice');
+      if (priceLabel) {
+        priceLabel.innerText = "Network Blocked. Re-routing line...";
+        priceLabel.style.color = "#da3633";
       }
     }
 
-    // 2. Process custom market execution orders
+    // Process custom market simulation orders
     function executeOrder() {
       if (currentInrPrice === 0) {
         alert("Establishing live balance paths. Please tap submit again in 2 seconds.");
@@ -219,7 +230,7 @@
       alert(`Successfully opened a ${side} market position! Tracking active.`);
     }
 
-    // 3. Render the persistent data table array
+    // Render persistent local storage array out to screen elements
     function renderPositionsTable() {
       const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
       const tableBody = document.getElementById('positionsTableBody');
@@ -247,7 +258,6 @@
       }).join('');
     }
 
-    // 4. Wipe position parameters from browser data stores on close click
     function closePosition(tradeId) {
       let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
       positions = positions.filter(trade => trade.id !== tradeId);
@@ -257,9 +267,9 @@
       alert("Position settled and wiped from browser store.");
     }
 
-    // Initialize immediate data loops on startup context
+    // Initialize looping structure tasks
     fetchLivePrice();
-    setInterval(fetchLivePrice, 2000);
+    setInterval(fetchLivePrice, 3000); // 3-second cycle interval loop
     renderPositionsTable();
   </script>
 </body>
