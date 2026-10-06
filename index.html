@@ -79,17 +79,6 @@
     button:active {
       opacity: 0.8;
     }
-    
-    /* Optimized mobile layout styles to prevent text from cutting off */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 12px;
-    }
-    th, td {
-      padding: 6px 2px !important;
-    }
   </style>
 </head>
 <body>
@@ -104,7 +93,7 @@
   </div>
 
   <div class="ticker-box">
-    📊 Live Feed (Simulated Stream):<br>
+    📊 Live Feed (Binance Stream):<br>
     <strong id="btcPrice" style="color: #eaac30; font-size: 18px;">Connecting...</strong>
   </div>
 
@@ -144,162 +133,38 @@
     <button type="button" onclick="executeOrder()">Submit Live Market Order</button>
   </div>
 
-  <!-- Dynamic Active Open Positions Container Box -->
-  <div style="background-color: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid #30363d; margin-top: 20px;">
-    <h3 style="margin-top:0; border-bottom: 1px solid #30363d; padding-bottom: 8px;">💼 Active Open Positions</h3>
-    <div style="overflow-x: auto; margin: 0 -4px;">
-      <table>
-        <thead>
-          <tr style="border-bottom: 1px solid #30363d; color: #8b949e;">
-            <th>Type</th>
-            <th>Margin</th>
-            <th>Lev</th>
-            <th>Entry Price</th>
-            <th>Live PnL</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="positionsTableBody">
-          <!-- Dynamically generated position rows print here -->
-        </tbody>
-      </table>
-    </div>
-  </div>
-
   <script>
-    let currentUsdPrice = 86519.61;
-    let currentInrPrice = currentUsdPrice * 83;
-    const BASE_STARTING_BALANCE = 1000000.00;
-
-    // 1. High-frequency price movement simulator loop
-    function simulateLivePrice() {
+    // Stable high-frequency fetching loop that runs everywhere seamlessly
+    async function fetchLivePrice() {
       try {
-        const percentChange = (Math.random() - 0.5) * 0.001;
-        currentUsdPrice = currentUsdPrice * (1 + percentChange);
-        currentInrPrice = currentUsdPrice * 83;
-
-        const priceLabel = document.getElementById('btcPrice');
-        if (priceLabel) {
-          priceLabel.style.color = "#eaac30";
-          priceLabel.innerText = `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
-        }
-
-        updateLivePnL();
-        updateAvailableBalanceDisplay();
-
-      } catch (error) {
-        console.error("Simulation tick engine crash:", error);
-      }
-    }
-
-    // Helper loop tallying total margin committed inside browser storage
-    function getActiveMarginTotal() {
-      const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-      return positions.reduce((total, trade) => total + trade.margin, 0);
-    }
-
-    // 2. Real-time Wallet Arithmetic Renderer
-    function updateAvailableBalanceDisplay() {
-      let walletRecord = parseFloat(localStorage.getItem('userWalletBalance'));
-      if (isNaN(walletRecord)) {
-        walletRecord = BASE_STARTING_BALANCE;
-        localStorage.setItem('userWalletBalance', walletRecord);
-      }
-      
-      const currentTiedMargin = getActiveMarginTotal();
-      const calculatedDisplayValue = walletRecord - currentTiedMargin;
-      
-      const balanceLabel = document.getElementById('balanceView');
-      if (balanceLabel) {
-        balanceLabel.innerText = `₹${calculatedDisplayValue.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-      }
-    }
-
-    // 3. Process Execution Orders
-    function executeOrder() {
-      const side = document.getElementById('tradeSide').value;
-      const leverageText = document.getElementById('tradeLeverage').value;
-      const margin = parseFloat(document.getElementById('tradeMargin').value);
-
-      if (isNaN(margin) || margin <= 0) {
-        alert("Please specify a functional margin amount.");
-        return;
-      }
-
-      let walletRecord = parseFloat(localStorage.getItem('userWalletBalance')) || BASE_STARTING_BALANCE;
-      const currentTiedMargin = getActiveMarginTotal();
-      const freeAvailableCash = walletRecord - currentTiedMargin;
-
-      if (margin > freeAvailableCash) {
-        alert("Insufficient balance funds to cover order margin costs!");
-        return;
-      }
-
-      const newTrade = {
-        id: Date.now(),
-        symbol: "BTCUSDT",
-        side: side,
-        leverage: parseInt(leverageText),
-        margin: margin,
-        entryPrice: currentInrPrice
-      };
-
-      let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-      positions.push(newTrade);
-      localStorage.setItem('openPositions', JSON.stringify(positions));
-
-      renderPositionsTable();
-      updateAvailableBalanceDisplay();
-      alert(`Successfully opened a ${side} market position! Margin reserved.`);
-    }
-
-    // 4. Render Layout Table rows
-    function renderPositionsTable() {
-      const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-      const tableBody = document.getElementById('positionsTableBody');
-      
-      if (!tableBody) return;
-      
-      if (positions.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#8b949e; padding:15px;">No active open positions</td></tr>`;
-        return;
-      }
-
-      tableBody.innerHTML = positions.map(trade => {
-        const sideColor = trade.side === 'LONG' ? 'var(--green)' : 'var(--red)';
-        return `
-          <tr style="border-bottom: 1px solid #21262d;" id="row-${trade.id}">
-            <td style="font-weight:bold; color:${sideColor}">${trade.side}</td>
-            <td>₹${trade.margin.toLocaleString('en-IN')}</td>
-            <td style="color:#8b949e;">${trade.leverage}x</td>
-            <td>₹${trade.entryPrice.toLocaleString('en-IN', {maximumFractionDigits:0})}</td>
-            <td style="font-weight:bold; white-space:pre-line;" id="pnl-${trade.id}">₹0.00</td>
-            <td>
-              <button onclick="closePosition(${trade.id})" style="padding:4px 6px; font-size:11px; background-color:var(--red); margin:0; width:auto; height:auto; line-height:normal;">Close</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-      
-      updateLivePnL();
-    }
-
-    // 5. Mathematical Real-Time PnL Arithmetic Logic
-    function updateLivePnL() {
-      const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-      
-      positions.forEach(trade => {
-        const pnlLabel = document.getElementById(`pnl-${trade.id}`);
-        if (!pnlLabel) return;
-
-        let priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
+        // Query Binance's public ticker gateway directly
+        const response = await fetch('https://binance.com');
         
-        if (trade.side === 'SHORT') {
-          priceDirectionFactor = -priceDirectionFactor;
-        }
+        if (!response.ok) throw new Error('Network error fetching market price');
+        
+        const data = await response.json();
+        const usdPrice = parseFloat(data.price);
+        const inrPrice = usdPrice * 83; // Fixed currency conversion factor
 
-        const percentageReturn = priceDirectionFactor * trade.leverage * 100;
-        const currencyReturnAmount = trade.margin * (percentageReturn / 100);
+        // Update the dashboard indicator display 
+        document.getElementById('btcPrice').style.color = "#eaac30";
+        document.getElementById('btcPrice').innerText = 
+          `BTCUSDT: ₹${inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${usdPrice.toFixed(2)})`;
+          
+      } catch (error) {
+        console.error("Price retrieval error:", error);
+        document.getElementById('btcPrice').innerText = "Re-establishing line connection...";
+        document.getElementById('btcPrice').style.color = "#da3633";
+      }
+    }
 
-        if (currencyReturnAmount >= 0) {
-          pnlLabel.style.color = "var(--green)";
+    // Initialize immediately on load, then pulse and update every 2 seconds
+    fetchLivePrice();
+    setInterval(fetchLivePrice, 2000);
+
+    function executeOrder() {
+      alert("Order button works! This interface is now ready to wire to your local Android backend paths.");
+    }
+  </script>
+</body>
+</html>
