@@ -1,314 +1,282 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sejal's Crypto Simulator</title>
-  <style>
-    :root {
-      --bg-color: #0d1117;
-      --card-bg: #161b22;
-      --text-main: #c9d1d9;
-      --green: #238636;
-      --green-text: #00c873;
-      --red: #da3633;
-      --red-text: #ff3b30;
-      --accent: #58a6ff;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      margin: 0;
-      padding: 15px;
-    }
-    .header {
-      text-align: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #30363d;
-    }
-    .balance-card {
-      background-color: var(--card-bg);
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 15px 0;
-      text-align: center;
-    }
-    .balance-amount {
-      font-size: 28px;
-      font-weight: bold;
-      color: var(--accent);
-      margin-top: 5px;
-    }
-    .ticker-box {
-      background: #21262d;
-      padding: 12px;
-      border-radius: 6px;
-      font-family: monospace;
-      text-align: center;
-      margin-bottom: 20px;
-      border-left: 4px solid var(--accent);
-    }
-    .form-group {
-      margin-bottom: 12px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 14px;
-    }
-    select, input {
-      width: 100%;
-      padding: 10px;
-      background-color: #0d1117;
-      border: 1px solid #30363d;
-      color: white;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: var(--green);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 16px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    button:active {
-      opacity: 0.8;
-    }
-    .positions-card {
-      background-color: var(--card-bg);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #30363d;
-      margin-top: 20px;
-    }
-    .table-container {
-      overflow-x: auto;
-      width: 100%;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.85rem;
-    }
-    th {
-      color: #8b949e;
-      border-bottom: 1px solid #30363d;
-      padding: 8px 4px;
-      font-weight: 600;
-    }
-    td {
-      padding: 10px 4px;
-      vertical-align: middle;
-      border-bottom: 1px solid #21262d;
-    }
-  </style>
-</head>
-<body>
+Sejal's Crypto Simulator
 
-  <div class="header">
-    <h2>📈 Sejal's Trading Dashboard</h2>
-  </div>
+:root {
+--bg-color: #0d1117;
+--card-bg: #161b22;
+--text-main: #c9d1d9;
+--green: #238636;
+--green-text: #00c873;
+--red: #da3633;
+--red-text: #ff3b30;
+--accent: #58a6ff;
+}
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+background-color: var(--bg-color);
+color: var(--text-main);
+margin: 0;
+padding: 15px;
+}
+.header {
+text-align: center;
+padding: 10px 0;
+border-bottom: 1px solid #30363d;
+}
+.balance-card {
+background-color: var(--card-bg);
+border: 1px solid #30363d;
+border-radius: 8px;
+padding: 20px;
+margin: 15px 0;
+text-align: center;
+}
+.balance-amount {
+font-size: 28px;
+font-weight: bold;
+color: var(--accent);
+margin-top: 5px;
+}
+.ticker-box {
+background: #21262d;
+padding: 12px;
+border-radius: 6px;
+font-family: monospace;
+text-align: center;
+margin-bottom: 20px;
+border-left: 4px solid var(--accent);
+}
+.form-group {
+margin-bottom: 12px;
+}
+label {
+display: block;
+margin-bottom: 5px;
+font-size: 14px;
+}
+select, input {
+width: 100%;
+padding: 10px;
+background-color: #0d1117;
+border: 1px solid #30363d;
+color: white;
+border-radius: 6px;
+box-sizing: border-box;
+}
+button {
+width: 100%;
+padding: 12px;
+background-color: var(--green);
+color: white;
+border: none;
+border-radius: 6px;
+font-weight: bold;
+font-size: 16px;
+margin-top: 10px;
+cursor: pointer;
+}
+button:active {
+opacity: 0.8;
+}
+.positions-card {
+background-color: var(--card-bg);
+padding: 15px;
+border-radius: 8px;
+border: 1px solid #30363d;
+margin-top: 20px;
+}
+.table-container {
+overflow-x: auto;
+width: 100%;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+text-align: left;
+font-size: 0.85rem;
+}
+th {
+color: #8b949e;
+border-bottom: 1px solid #30363d;
+padding: 8px 4px;
+font-weight: 600;
+}
+td {
+padding: 10px 4px;
+vertical-align: middle;
+border-bottom: 1px solid #21262d;
+}
+.pos-row { border-bottom: 1px solid #21262d; }
+.td-bold { padding: 10px 4px; font-weight: bold; }
+.td-normal { padding: 10px 4px; }
+.td-grey { padding: 10px 4px; color: #8b949e; }
+.td-pnl { padding: 10px 4px; font-weight: bold; text-align: right; line-height: 1.3; }
+.td-action { padding: 10px 4px; text-align: right; }
+.pnl-pct { font-size: 0.75rem; font-weight: 500; }
+.btn-close { padding: 6px 12px; font-size: 12px; font-weight: 600; background-color: var(--red); margin: 0; width: auto; height: auto; line-height: normal; }
 
-  <div class="balance-card">
-    <div>Virtual Balance (INR)</div>
-    <div id="balanceView" class="balance-amount">₹10,00,000.00</div>
-  </div>
 
-  <div class="ticker-box">
-    📊 Live Feed (Simulated Stream):<br>
-    <strong id="btcPrice" style="color: #eaac30; font-size: 18px;">Connecting...</strong>
-  </div>
+📈 Sejal's Trading Dashboard
+Virtual Balance (INR)
+₹10,00,000.00
+📊 Live Feed (Simulated Stream):
 
-  <!-- Order Execution Form -->
-  <div style="background-color: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid #30363d;">
-    <h3 style="margin-top:0;">Open Execution Order</h3>
-    
-    <div class="form-group">
-      <label>Trading Pair</label>
-      <select id="tradeSymbol">
-        <option value="BTCUSDT">BTC / USDT (Bitcoin)</option>
-      </select>
-    </div>
+Connecting...
+Open Execution Order
+Trading Pair
+BTC / USDT (Bitcoin)
 
-    <div class="form-group">
-      <label>Position Type</label>
-      <select id="tradeSide">
-        <option value="LONG">LONG (Buy / Bullish)</option>
-        <option value="SHORT">SHORT (Sell / Bearish)</option>
-      </select>
-    </div>
+Position Type
+LONG (Buy / Bullish)
+SHORT (Sell / Bearish)
 
-    <div class="form-group">
-      <label>Leverage Multiplier</label>
-      <select id="tradeLeverage">
-        <option value="1">1x (No Leverage)</option>
-        <option value="5">5x Leverage</option>
-        <option value="10">10x Leverage</option>
-        <option value="20">20x Leverage</option>
-      </select>
-    </div>
+Leverage Multiplier
+1x (No Leverage)
+5x Leverage
+10x Leverage
+20x Leverage
 
-    <div class="form-group">
-      <label>Margin Amount (INR ₹)</label>
-      <input type="number" id="tradeMargin" value="10000" min="500">
-    </div>
+Margin Amount (INR ₹)
+Submit Live Market Order
+💼 Active Open Positions
 
-    <button type="button" onclick="executeOrder()">Submit Live Market Order</button>
-  </div>
+No active open positions
+Type
+	Margin
+	Leverage
+	Entry Price
+	Live PnL
+	Action
+var currentUsdPrice = 86519.61;
+var currentInrPrice = currentUsdPrice * 83;
+var virtualBalance = 1000000.00;
+function updateBalanceUI() {
+var balanceView = document.getElementById('balanceView');
+if (balanceView) {
+balanceView.innerText = '₹' + virtualBalance.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+}
+function simulateLivePrice() {
+try {
+var percentChange = (Math.random() - 0.5) * 0.001;
+currentUsdPrice = currentUsdPrice * (1 + percentChange);
+currentInrPrice = currentUsdPrice * 83;
+var priceLabel = document.getElementById('btcPrice');
+if (priceLabel) {
+priceLabel.innerText = 'BTCUSDT: ₹' + currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' ($' + currentUsdPrice.toFixed(2) + ')';
+}
+updateLivePnL();
+} catch (error) {
+console.error("Simulation run skipped safely:", error);
+}
+}
+function updateLivePnL() {
+try {
+var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+positions.forEach(function(trade) {
+var pnlCell = document.getElementById('pnl-' + trade.id);
+if (!pnlCell) return;
+var valDiv = pnlCell.querySelector('.pnl-val');
+var pctDiv = pnlCell.querySelector('.pnl-pct');
+var priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
+if (trade.side === 'SHORT') {
+priceDirectionFactor = -priceDirectionFactor;
+}
+var percentageReturn = priceDirectionFactor * trade.leverage * 100;
+var currencyReturnAmount = trade.margin * (percentageReturn / 100);
+var isProfit = currencyReturnAmount >= 0;
+var displayColor = isProfit ? "var(--green-text)" : "var(--red-text)";
+var sign = isProfit ? "+" : "";
+pnlCell.style.color = displayColor;
+if (valDiv) valDiv.innerText = sign + '₹' + currencyReturnAmount.toFixed(2);
+if (pctDiv) pctDiv.innerText = '(' + sign + percentageReturn.toFixed(2) + '%)';
+});
+} catch (e) {
+console.error("Calculation pulse skipped:", e);
+}
+}
+function executeOrder() {
+try {
+var side = document.getElementById('tradeSide').value;
+var leverageText = document.getElementById('tradeLeverage').value;
+var margin = parseFloat(document.getElementById('tradeMargin').value);
+if (isNaN(margin) || margin <= 0) {
+alert("Please specify a functional margin amount.");
+return;
+}
+if (margin > virtualBalance) {
+alert("🚨 Margin Insufficient! Order exceeds your available Virtual Balance.");
+return;
+}
+virtualBalance -= margin;
+localStorage.setItem('crypto_sim_balance', virtualBalance.toString());
+updateBalanceUI();
+var newTrade = {
+id: Date.now(),
+symbol: "BTCUSDT",
+side: side,
+leverage: parseInt(leverageText),
+margin: margin,
+entryPrice: currentInrPrice
+};
+var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+positions.push(newTrade);
+localStorage.setItem('openPositions', JSON.stringify(positions));
+renderPositionsTable();
+alert('Successfully opened a ' + side + ' market position!');
+} catch (err) {
+console.error("Order submission failure logged:", err);
+}
+}
+function renderPositionsTable() {
+try {
+var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+var tableBody = document.getElementById('positionsTableBody');
+if (!tableBody) return;
+if (positions.length === 0) {
+tableBody.innerHTML = 'No active open positions';
+return;
+}
+var htmlRows = '';
+positions.forEach(function(trade) {
+var color = trade.side === 'LONG' ? 'var(--green-text)' : 'var(--red-text)';
+var priceStr = trade.entryPrice.toLocaleString('en-IN', {maximumFractionDigits:2});
+htmlRows += '' + trade.side + '₹' + trade.margin.toLocaleString('en-IN') + '' + trade.leverage + 'x₹' + priceStr + '₹0.00(0.00%)Close';
+});
+tableBody.innerHTML = htmlRows;
+updateLivePnL();
+} catch (err) {
+console.error("Table structure parsing error caught:", err);
+}
+}
+function closePosition(tradeId) {
+try {
+var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+var tradeIndex = positions.findIndex(function(trade) { return trade.id === tradeId; });
+if (tradeIndex !== -1) {
+var trade = positions[tradeIndex];
+var priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
+if (trade.side === 'SHORT') priceDirectionFactor = -priceDirectionFactor;
+var percentageReturn = priceDirectionFactor * trade.leverage * 100;
+var currencyReturnAmount = trade.margin * (percentageReturn / 100);
+virtualBalance += (trade.margin + currencyReturnAmount);
+localStorage.setItem('crypto_sim_balance', virtualBalance.toString());
+updateBalanceUI();
+positions.splice(tradeIndex, 1);
+localStorage.setItem('openPositions', JSON.stringify(positions));
+renderPositionsTable();
+}
+} catch (e) {
+console.error("Trade finalization error caught:", e);
+}
+}
+var savedBalance = localStorage.getItem('crypto_sim_balance');
+if (savedBalance !== null) {
+virtualBalance = parseFloat(savedBalance);
+} else {
+localStorage.setItem('crypto_sim_balance', virtualBalance.toString());
+}
+updateBalanceUI();
+renderPositionsTable();
+simulateLivePrice();
+setInterval(simulateLivePrice, 1000);
 
-  <!-- Active Open Positions Table Module -->
-  <div class="positions-card">
-    <h3 style="margin-top:0; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-      💼 Active Open Positions
-    </h3>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th style="padding: 8px 4px;">Type</th>
-            <th style="padding: 8px 4px;">Margin</th>
-            <th style="padding: 8px 4px;">Leverage</th>
-            <th style="padding: 8px 4px;">Entry Price</th>
-            <th style="padding: 8px 4px; text-align: right;">Live PnL</th>
-            <th style="padding: 8px 4px; text-align: right;">Action</th>
-          </tr>
-        </thead>
-        <tbody id="positionsTableBody">
-          <tr><td colspan="6" style="text-align:center; color:#8b949e; padding:15px;">Loading metrics ledger...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    // --- 1. Global Core States Configuration ---
-    let currentUsdPrice = 86519.61; 
-    let currentInrPrice = currentUsdPrice * 83;
-    let virtualBalance = 1000000.00;
-
-    // --- 2. Safe Price Stream Engine ---
-    function simulateLivePrice() {
-      try {
-        // Generate minor random fluctuations
-        const percentChange = (Math.random() - 0.5) * 0.001;
-        currentUsdPrice = currentUsdPrice * (1 + percentChange);
-        currentInrPrice = currentUsdPrice * 83;
-
-        // Securely target feed text elements without blocking rendering operations
-        const priceLabel = document.getElementById('btcPrice');
-        if (priceLabel) {
-          priceLabel.innerText = `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
-        }
-
-        // Live calculation engine feed
-        updateLivePnL();
-
-      } catch (error) {
-        console.error("Simulation ticker crash caught gracefully:", error);
-      }
-    }
-
-    // --- 3. Live Mathematical PnL Recalculator Matrix ---
-    function updateLivePnL() {
-      try {
-        const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-        positions.forEach(trade => {
-          const pnlCell = document.getElementById(`pnl-${trade.id}`);
-          if (!pnlCell) return;
-
-          const valDiv = pnlCell.querySelector('.pnl-val');
-          const pctDiv = pnlCell.querySelector('.pnl-pct');
-
-          let priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
-          if (trade.side === 'SHORT') {
-            priceDirectionFactor = -priceDirectionFactor;
-          }
-
-          const percentageReturn = priceDirectionFactor * trade.leverage * 100;
-          const currencyReturnAmount = trade.margin * (percentageReturn / 100);
-
-          const isProfit = currencyReturnAmount >= 0;
-          const displayColor = isProfit ? "var(--green-text)" : "var(--red-text)";
-          const sign = isProfit ? "+" : "";
-
-          pnlCell.style.color = displayColor;
-          if (valDiv) valDiv.innerText = `${sign}₹${currencyReturnAmount.toFixed(2)}`;
-          if (pctDiv) pctDiv.innerText = `(${sign}${percentageReturn.toFixed(2)}%)`;
-        });
-      } catch (e) {
-        console.error("PnL processing runtime loop skipped:", e);
-      }
-    }
-
-    // --- 4. Submit Order Action Controller ---
-    function executeOrder() {
-      try {
-        const side = document.getElementById('tradeSide').value;
-        const leverageText = document.getElementById('tradeLeverage').value;
-        const margin = parseFloat(document.getElementById('tradeMargin').value);
-
-        if (isNaN(margin) || margin <= 0) {
-          alert("Please specify a functional margin amount.");
-          return;
-        }
-
-        if (margin > virtualBalance) {
-          alert("🚨 Margin Insufficient! Order exceeds your available Virtual Balance.");
-          return;
-        }
-
-        virtualBalance -= margin;
-        localStorage.setItem('crypto_sim_balance', virtualBalance.toString());
-        updateBalanceUI();
-
-        const newTrade = {
-          id: Date.now(),
-          symbol: "BTCUSDT",
-          side: side,
-          leverage: parseInt(leverageText),
-          margin: margin,
-          entryPrice: currentInrPrice
-        };
-
-        let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-        positions.push(newTrade);
-        localStorage.setItem('openPositions', JSON.stringify(positions));
-
-        renderPositionsTable();
-        alert(`Successfully opened a ${side} market position!`);
-      } catch (err) {
-        alert("Failed to submit execution order. See developer dashboard console log.");
-        console.error(err);
-      }
-    }
-
-    // --- 5. Render Active Ledger Table ---
-    function renderPositionsTable() {
-      try {
-        const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-        const tableBody = document.getElementById('positionsTableBody');
-        
-        if (!tableBody) return;
-        
-        if (positions.length === 0) {
-          tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#8b949e; padding:15px;">No active open positions</td></tr>`;
-          return;
-        }
-
-        tableBody.innerHTML = positions.map(trade => {
-          const sideColor = trade.side === 'LONG' ? 'var(--green-text)' : 'var(--red-text)';
-          return `
-            <tr style="border-bottom: 1px solid #21262d;" id="row-${trade.id}">
-              <td style="padding: 10px 4px; font-weight:bold; color:${sideColor}">${trade.side}</td>
-              <td style="padding: 10px 4px;">₹${trade.margin.toLocaleString('en-IN')}</td>
-              <td style="padding: 10px 4px; color:#8b949e;">${trade.leverage}x</td>
-              <td style="padding: 10px 4px;">₹${trade.entryPrice.toLocaleString('en-IN', {maximumFractionDigits:2})}</td>
