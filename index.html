@@ -143,11 +143,10 @@
           </tr>
         </thead>
   <script>
-    // Initialize price matching the current international value levels
-    let currentUsdPrice = 86250.00;
+    let currentUsdPrice = 86239.03;
     let currentInrPrice = currentUsdPrice * 83;
 
-    // High-frequency simulator that changes numbers locally to bypass network blocks
+    // 1. Simulation Engine - Loops every second and updates prices AND PnL columns
     function simulateLivePrice() {
       try {
         const percentChange = (Math.random() - 0.5) * 0.001;
@@ -159,18 +158,121 @@
           priceLabel.style.color = "#eaac30";
           priceLabel.innerText = `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
         }
+
+        // Trigger real-time calculation refresh for all active table items
+        updateLivePnL();
+
       } catch (error) {
-        console.error("Simulation error:", error);
+        console.error("Simulation tick exception:", error);
       }
     }
 
-    // Initialize the tick loop immediately on launch context
-    simulateLivePrice();
-    setInterval(simulateLivePrice, 1000); // Triggers updates smoothly every 1 second
-
+    // 2. Submit Order Logic
     function executeOrder() {
-      alert("Order button works! This interface is now ready to wire to your local Android backend paths.");
+      const side = document.getElementById('tradeSide').value;
+      const leverageText = document.getElementById('tradeLeverage').value;
+      const margin = parseFloat(document.getElementById('tradeMargin').value);
+
+      if (isNaN(margin) || margin <= 0) {
+        alert("Please specify a functional margin amount.");
+        return;
+      }
+
+      const newTrade = {
+        id: Date.now(),
+        symbol: "BTCUSDT",
+        side: side,
+        leverage: parseInt(leverageText), // Parsed as a clean number for financial calculations
+        margin: margin,
+        entryPrice: currentInrPrice
+      };
+
+      let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      positions.push(newTrade);
+      localStorage.setItem('openPositions', JSON.stringify(positions));
+
+      renderPositionsTable();
+      alert(`Successfully opened a ${side} market position! Tracking active.`);
     }
+
+    // 3. Render Table Structure
+    function renderPositionsTable() {
+      const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      const tableBody = document.getElementById('positionsTableBody');
+      
+      if (!tableBody) return;
+      
+      if (positions.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#8b949e; padding:15px;">No active open positions</td></tr>`;
+        return;
+      }
+
+      tableBody.innerHTML = positions.map(trade => {
+        const sideColor = trade.side === 'LONG' ? 'var(--green)' : 'var(--red)';
+        return `
+          <tr style="border-bottom: 1px solid #21262d;" id="row-${trade.id}">
+            <td style="padding: 10px 4px; font-weight:bold; color:${sideColor}">${trade.side}</td>
+            <td style="padding: 10px 4px;">₹${trade.margin.toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 4px; color:#8b949e;">${trade.leverage}x</td>
+            <td style="padding: 10px 4px;">₹${trade.entryPrice.toLocaleString('en-IN', {maximumFractionDigits:2})}</td>
+            <!-- The specific text container our script targets every second -->
+            <td style="padding: 10px 4px; font-weight:bold;" id="pnl-${trade.id}">₹0.00 (0.00%)</td>
+            <td style="padding: 10px 4px;">
+              <button onclick="closePosition(${trade.id})" style="padding:4px 8px; font-size:12px; background-color:var(--red); margin:0; width:auto; height:auto; line-height:normal;">Close</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      
+      // Calculate immediate values right after structural table layout matches elements
+      updateLivePnL();
+    }
+
+    // 4. Mathematical Real-Time PnL Engine
+    function updateLivePnL() {
+      const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      
+      positions.forEach(trade => {
+        const pnlLabel = document.getElementById(`pnl-${trade.id}`);
+        if (!pnlLabel) return;
+
+        // Calculate the raw price shift direction percentage
+        let priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
+        
+        // If it's a SHORT position, inverse the price logic (you make money when the price falls)
+        if (trade.side === 'SHORT') {
+          priceDirectionFactor = -priceDirectionFactor;
+        }
+
+        // Apply leverage settings to calculate the final simulated return parameters
+        const percentageReturn = priceDirectionFactor * trade.leverage * 100;
+        const currencyReturnAmount = trade.margin * (percentageReturn / 100);
+
+        // Visual coloring shifts based on positive or negative balances
+        if (currencyReturnAmount >= 0) {
+          pnlLabel.style.color = "var(--green)";
+          pnlLabel.innerText = `+₹${currencyReturnAmount.toFixed(2)} (+${percentageReturn.toFixed(2)}%)`;
+        } else {
+          pnlLabel.style.color = "var(--red)";
+          pnlLabel.innerText = `₹${currencyReturnAmount.toFixed(2)} (${percentageReturn.toFixed(2)}%)`;
+        }
+      });
+    }
+
+    // 5. Close Position settled tracking removal
+    function closePosition(tradeId) {
+      let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      positions = positions.filter(trade => trade.id !== tradeId);
+      localStorage.setItem('openPositions', JSON.stringify(positions));
+      
+      renderPositionsTable();
+      alert("Position settled and wiped from browser store.");
+    }
+
+    // Launch structural processes on startup context
+    simulateLivePrice();
+    setInterval(simulateLivePrice, 1000); // Drives active loops every 1 second
+    renderPositionsTable();
   </script>
 </body>
 </html>
