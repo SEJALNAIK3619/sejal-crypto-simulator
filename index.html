@@ -132,7 +132,16 @@
 
     <button type="button" onclick="executeOrder()">Submit Live Market Order</button>
   </div>
-
+<thead>
+          <tr style="border-bottom: 1px solid #30363d; color: #8b949e;">
+            <th style="padding: 8px 4px;">Type</th>
+            <th style="padding: 8px 4px;">Margin</th>
+            <th style="padding: 8px 4px;">Leverage</th>
+            <th style="padding: 8px 4px;">Entry Price</th>
+            <th style="padding: 8px 4px;">Live PnL</th> <!-- ADD THIS LINE -->
+            <th style="padding: 8px 4px;">Action</th>
+          </tr>
+        </thead>
   <script>
     // Initialize price matching the current international value levels
     let currentUsdPrice = 86250.00;
