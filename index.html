@@ -154,15 +154,13 @@
       </table>
     </div>
   </div>
-  <script>
-    // Global price state tracking containers initialized to current real-market baselines
-    let currentUsdPrice = 85600.00;
-    let currentInrPrice = currentUsdPrice * 83; // Fixed conversion multiplier
+    <script>
+    let currentUsdPrice = 86239.03;
+    let currentInrPrice = currentUsdPrice * 83;
 
-    // 1. High-frequency Simulation Engine (Bypasses all network firewalls completely)
+    // 1. Simulation Engine - Loops every second and updates prices AND PnL columns
     function simulateLivePrice() {
       try {
-        // Generates a realistic random price movement between -0.05% and +0.05%
         const percentChange = (Math.random() - 0.5) * 0.001;
         currentUsdPrice = currentUsdPrice * (1 + percentChange);
         currentInrPrice = currentUsdPrice * 83;
@@ -172,20 +170,19 @@
           priceLabel.style.color = "#eaac30";
           priceLabel.innerText = `BTCUSDT: ₹${currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2})} ($${currentUsdPrice.toFixed(2)})`;
         }
+
+        // Trigger real-time calculation refresh for all active table items
+        updateLivePnL();
+
       } catch (error) {
         console.error("Simulation tick exception:", error);
       }
     }
 
-    // 2. Process custom market execution orders
+    // 2. Submit Order Logic
     function executeOrder() {
-      if (currentInrPrice === 0) {
-        alert("Establishing simulation balance paths. Please tap submit again.");
-        return;
-      }
-
       const side = document.getElementById('tradeSide').value;
-      const leverage = document.getElementById('tradeLeverage').value;
+      const leverageText = document.getElementById('tradeLeverage').value;
       const margin = parseFloat(document.getElementById('tradeMargin').value);
 
       if (isNaN(margin) || margin <= 0) {
@@ -197,7 +194,7 @@
         id: Date.now(),
         symbol: "BTCUSDT",
         side: side,
-        leverage: leverage + "x",
+        leverage: parseInt(leverageText), // Parsed as a clean number for financial calculations
         margin: margin,
         entryPrice: currentInrPrice
       };
@@ -210,7 +207,7 @@
       alert(`Successfully opened a ${side} market position! Tracking active.`);
     }
 
-    // 3. Render persistent local storage array out to screen elements
+    // 3. Render Table Structure
     function renderPositionsTable() {
       const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
       const tableBody = document.getElementById('positionsTableBody');
@@ -218,27 +215,63 @@
       if (!tableBody) return;
       
       if (positions.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#8b949e; padding:15px;">No active open positions</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#8b949e; padding:15px;">No active open positions</td></tr>`;
         return;
       }
 
       tableBody.innerHTML = positions.map(trade => {
         const sideColor = trade.side === 'LONG' ? 'var(--green)' : 'var(--red)';
         return `
-          <tr style="border-bottom: 1px solid #21262d;">
+          <tr style="border-bottom: 1px solid #21262d;" id="row-${trade.id}">
             <td style="padding: 10px 4px; font-weight:bold; color:${sideColor}">${trade.side}</td>
             <td style="padding: 10px 4px;">₹${trade.margin.toLocaleString('en-IN')}</td>
-            <td style="padding: 10px 4px; color:#8b949e;">${trade.leverage}</td>
+            <td style="padding: 10px 4px; color:#8b949e;">${trade.leverage}x</td>
             <td style="padding: 10px 4px;">₹${trade.entryPrice.toLocaleString('en-IN', {maximumFractionDigits:2})}</td>
+            <!-- The specific text container our script targets every second -->
+            <td style="padding: 10px 4px; font-weight:bold;" id="pnl-${trade.id}">₹0.00 (0.00%)</td>
             <td style="padding: 10px 4px;">
               <button onclick="closePosition(${trade.id})" style="padding:4px 8px; font-size:12px; background-color:var(--red); margin:0; width:auto; height:auto; line-height:normal;">Close</button>
             </td>
           </tr>
         `;
       }).join('');
+      
+      // Calculate immediate values right after structural table layout matches elements
+      updateLivePnL();
     }
 
-    // 4. Wipe position parameters from browser data stores on close click
+    // 4. Mathematical Real-Time PnL Engine
+    function updateLivePnL() {
+      const positions = JSON.parse(localStorage.getItem('openPositions')) || [];
+      
+      positions.forEach(trade => {
+        const pnlLabel = document.getElementById(`pnl-${trade.id}`);
+        if (!pnlLabel) return;
+
+        // Calculate the raw price shift direction percentage
+        let priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
+        
+        // If it's a SHORT position, inverse the price logic (you make money when the price falls)
+        if (trade.side === 'SHORT') {
+          priceDirectionFactor = -priceDirectionFactor;
+        }
+
+        // Apply leverage settings to calculate the final simulated return parameters
+        const percentageReturn = priceDirectionFactor * trade.leverage * 100;
+        const currencyReturnAmount = trade.margin * (percentageReturn / 100);
+
+        // Visual coloring shifts based on positive or negative balances
+        if (currencyReturnAmount >= 0) {
+          pnlLabel.style.color = "var(--green)";
+          pnlLabel.innerText = `+₹${currencyReturnAmount.toFixed(2)} (+${percentageReturn.toFixed(2)}%)`;
+        } else {
+          pnlLabel.style.color = "var(--red)";
+          pnlLabel.innerText = `₹${currencyReturnAmount.toFixed(2)} (${percentageReturn.toFixed(2)}%)`;
+        }
+      });
+    }
+
+    // 5. Close Position settled tracking removal
     function closePosition(tradeId) {
       let positions = JSON.parse(localStorage.getItem('openPositions')) || [];
       positions = positions.filter(trade => trade.id !== tradeId);
@@ -248,11 +281,12 @@
       alert("Position settled and wiped from browser store.");
     }
 
-    // Initialize immediate background price loop
+    // Launch structural processes on startup context
     simulateLivePrice();
-    setInterval(simulateLivePrice, 1000); // Ticks and pulses every single second smoothly
+    setInterval(simulateLivePrice, 1000); // Drives active loops every 1 second
     renderPositionsTable();
   </script>
+
 
 </body>
 </html>
