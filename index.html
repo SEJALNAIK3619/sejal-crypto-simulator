@@ -1,29 +1,37 @@
-Sejal's Crypto Simulator
-
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" 
+content="width=device-width, 
+initial-scale=1.0">
+<title>Crypto Sim</title>
+<style>
 :root {
---bg-color: #0d1117;
---card-bg: #161b22;
---text-main: #c9d1d9;
+--bg: #0d1117;
+--card: #161b22;
+--text: #c9d1d9;
 --green: #238636;
---green-text: #00c873;
+--gtxt: #00c873;
 --red: #da3633;
---red-text: #ff3b30;
+--rtxt: #ff3b30;
 --accent: #58a6ff;
 }
 body {
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-background-color: var(--bg-color);
-color: var(--text-main);
+font-family: sans-serif;
+background-color: var(--bg);
+color: var(--text);
 margin: 0;
 padding: 15px;
 }
 .header {
 text-align: center;
 padding: 10px 0;
-border-bottom: 1px solid #30363d;
+border-bottom: 
+1px solid #30363d;
 }
 .balance-card {
-background-color: var(--card-bg);
+background: var(--card);
 border: 1px solid #30363d;
 border-radius: 8px;
 padding: 20px;
@@ -34,16 +42,15 @@ text-align: center;
 font-size: 28px;
 font-weight: bold;
 color: var(--accent);
-margin-top: 5px;
 }
 .ticker-box {
 background: #21262d;
 padding: 12px;
 border-radius: 6px;
-font-family: monospace;
 text-align: center;
 margin-bottom: 20px;
-border-left: 4px solid var(--accent);
+border-left: 
+4px solid var(--accent);
 }
 .form-group {
 margin-bottom: 12px;
@@ -56,7 +63,7 @@ font-size: 14px;
 select, input {
 width: 100%;
 padding: 10px;
-background-color: #0d1117;
+background: #0d1117;
 border: 1px solid #30363d;
 color: white;
 border-radius: 6px;
@@ -65,20 +72,15 @@ box-sizing: border-box;
 button {
 width: 100%;
 padding: 12px;
-background-color: var(--green);
+background: var(--green);
 color: white;
 border: none;
 border-radius: 6px;
 font-weight: bold;
-font-size: 16px;
-margin-top: 10px;
 cursor: pointer;
 }
-button:active {
-opacity: 0.8;
-}
 .positions-card {
-background-color: var(--card-bg);
+background: var(--card);
 padding: 15px;
 border-radius: 8px;
 border: 1px solid #30363d;
@@ -91,192 +93,395 @@ width: 100%;
 table {
 width: 100%;
 border-collapse: collapse;
-text-align: left;
-font-size: 0.85rem;
 }
 th {
 color: #8b949e;
-border-bottom: 1px solid #30363d;
+border-bottom: 
+1px solid #30363d;
 padding: 8px 4px;
-font-weight: 600;
 }
 td {
 padding: 10px 4px;
-vertical-align: middle;
-border-bottom: 1px solid #21262d;
+border-bottom: 
+1px solid #21262d;
 }
-.pos-row { border-bottom: 1px solid #21262d; }
-.td-bold { padding: 10px 4px; font-weight: bold; }
-.td-normal { padding: 10px 4px; }
-.td-grey { padding: 10px 4px; color: #8b949e; }
-.td-pnl { padding: 10px 4px; font-weight: bold; text-align: right; line-height: 1.3; }
-.td-action { padding: 10px 4px; text-align: right; }
-.pnl-pct { font-size: 0.75rem; font-weight: 500; }
-.btn-close { padding: 6px 12px; font-size: 12px; font-weight: 600; background-color: var(--red); margin: 0; width: auto; height: auto; line-height: normal; }
+.td-pnl {
+text-align: right;
+}
+.td-act {
+text-align: right;
+}
+.btn-close {
+padding: 6px 12px;
+background: var(--red);
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+}
+</style>
+</head>
+<body>
 
+<div class="header">
+<h2>Trading Dashboard</h2>
+</div>
 
-📈 Sejal's Trading Dashboard
-Virtual Balance (INR)
+<div class="balance-card">
+<div>Virtual Balance (INR)</div>
+<div id="balanceView" 
+class="balance-amount">
 ₹10,00,000.00
-📊 Live Feed (Simulated Stream):
+</div>
+</div>
 
+<div class="ticker-box">
+Live Feed:<br>
+<strong id="btcPrice" 
+style="color: #eaac30;">
 Connecting...
-Open Execution Order
-Trading Pair
-BTC / USDT (Bitcoin)
+</strong>
+</div>
 
-Position Type
-LONG (Buy / Bullish)
-SHORT (Sell / Bearish)
+<div class="balance-card" 
+style="text-align: left;">
+<h3>Open Order</h3>
 
-Leverage Multiplier
-1x (No Leverage)
-5x Leverage
-10x Leverage
-20x Leverage
+<div class="form-group">
+<label>Pair</label>
+<select id="tradeSymbol">
+<option value="BTCUSDT">
+BTC / USDT
+</option>
+</select>
+</div>
 
-Margin Amount (INR ₹)
-Submit Live Market Order
-💼 Active Open Positions
+<div class="form-group">
+<label>Side</label>
+<select id="tradeSide">
+<option value="LONG">
+LONG (Buy)
+</option>
+<option value="SHORT">
+SHORT (Sell)
+</option>
+</select>
+</div>
 
-No active open positions
-Type
-	Margin
-	Leverage
-	Entry Price
-	Live PnL
-	Action
-var currentUsdPrice = 86519.61;
-var currentInrPrice = currentUsdPrice * 83;
-var virtualBalance = 1000000.00;
+<div class="form-group">
+<label>Leverage</label>
+<select id="tradeLeverage">
+<option value="1">1x</option>
+<option value="5">5x</option>
+<option value="10">10x</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Margin (₹)</label>
+<input type="number" 
+id="tradeMargin" 
+value="10000">
+</div>
+
+<button type="button" 
+onclick="executeOrder()">
+Submit Order
+</button>
+</div>
+
+<div class="positions-card">
+<h3>Active Positions</h3>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Side</th>
+<th>Margin</th>
+<th>Lev</th>
+<th>Entry</th>
+<th style="text-align:right;">
+PnL
+</th>
+<th style="text-align:right;">
+Action
+</th>
+</tr>
+</thead>
+<tbody id="posBody">
+<tr>
+<td colspan="6" 
+style="text-align:center;">
+No positions
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<script>
+var usdPrice = 86519.61; 
+var inrPrice = usdPrice * 83;
+var balance = 1000000.00;
+
 function updateBalanceUI() {
-var balanceView = document.getElementById('balanceView');
-if (balanceView) {
-balanceView.innerText = '₹' + virtualBalance.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+var view = document.getElementById(
+'balanceView'
+);
+if (view) {
+view.innerText = '₹' + 
+balance.toLocaleString(
+'en-IN', 
+{
+minimumFractionDigits: 2, 
+maximumFractionDigits: 2
+}
+);
 }
 }
+
 function simulateLivePrice() {
 try {
-var percentChange = (Math.random() - 0.5) * 0.001;
-currentUsdPrice = currentUsdPrice * (1 + percentChange);
-currentInrPrice = currentUsdPrice * 83;
-var priceLabel = document.getElementById('btcPrice');
-if (priceLabel) {
-priceLabel.innerText = 'BTCUSDT: ₹' + currentInrPrice.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' ($' + currentUsdPrice.toFixed(2) + ')';
+var change = 
+(Math.random() - 0.5) * 0.001;
+usdPrice = usdPrice * (1 + change);
+inrPrice = usdPrice * 83;
+
+var lbl = document.getElementById(
+'btcPrice'
+);
+if (lbl) {
+lbl.innerText = 'BTC: ₹' + 
+inrPrice.toLocaleString(
+'en-IN', 
+{maximumFractionDigits:2}
+) + ' ($' + 
+usdPrice.toFixed(2) + ')';
 }
 updateLivePnL();
 } catch (error) {
-console.error("Simulation run skipped safely:", error);
+console.error(error);
 }
 }
+
 function updateLivePnL() {
 try {
-var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-positions.forEach(function(trade) {
-var pnlCell = document.getElementById('pnl-' + trade.id);
-if (!pnlCell) return;
-var valDiv = pnlCell.querySelector('.pnl-val');
-var pctDiv = pnlCell.querySelector('.pnl-pct');
-var priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
+var list = JSON.parse(
+localStorage.getItem('openPos')
+) || [];
+list.forEach(function(trade) {
+var cell = document.getElementById(
+'pnl-' + trade.id
+);
+if (!cell) return;
+
+var vDiv = cell.querySelector(
+'.pnl-val'
+);
+var pDiv = cell.querySelector(
+'.pnl-pct'
+);
+
+var diff = (inrPrice - 
+trade.entry) / trade.entry;
 if (trade.side === 'SHORT') {
-priceDirectionFactor = -priceDirectionFactor;
+diff = -diff;
 }
-var percentageReturn = priceDirectionFactor * trade.leverage * 100;
-var currencyReturnAmount = trade.margin * (percentageReturn / 100);
-var isProfit = currencyReturnAmount >= 0;
-var displayColor = isProfit ? "var(--green-text)" : "var(--red-text)";
-var sign = isProfit ? "+" : "";
-pnlCell.style.color = displayColor;
-if (valDiv) valDiv.innerText = sign + '₹' + currencyReturnAmount.toFixed(2);
-if (pctDiv) pctDiv.innerText = '(' + sign + percentageReturn.toFixed(2) + '%)';
+
+var pct = diff * 
+trade.leverage * 100;
+var amt = trade.margin * 
+(pct / 100);
+
+var win = amt >= 0;
+cell.style.color = win ? 
+"var(--gtxt)" : "var(--rtxt)";
+
+var sign = win ? "+" : "";
+if (vDiv) vDiv.innerText = 
+sign + '₹' + amt.toFixed(2);
+if (pDiv) pDiv.innerText = 
+'(' + sign + pct.toFixed(2) + 
+'%)';
 });
 } catch (e) {
-console.error("Calculation pulse skipped:", e);
+console.error(e);
 }
 }
+
 function executeOrder() {
 try {
-var side = document.getElementById('tradeSide').value;
-var leverageText = document.getElementById('tradeLeverage').value;
-var margin = parseFloat(document.getElementById('tradeMargin').value);
-if (isNaN(margin) || margin <= 0) {
-alert("Please specify a functional margin amount.");
+var side = document.getElementById(
+'tradeSide'
+).value;
+var lev = document.getElementById(
+'tradeLeverage'
+).value;
+var mgn = parseFloat(
+document.getElementById(
+'tradeMargin'
+).value
+);
+
+if (isNaN(mgn) || mgn <= 0) {
+alert("Invalid margin");
 return;
 }
-if (margin > virtualBalance) {
-alert("🚨 Margin Insufficient! Order exceeds your available Virtual Balance.");
+if (mgn > balance) {
+alert("Insufficient balance");
 return;
 }
-virtualBalance -= margin;
-localStorage.setItem('crypto_sim_balance', virtualBalance.toString());
+
+balance -= mgn;
+localStorage.setItem(
+'crypto_sim_bal', 
+balance.toString()
+);
 updateBalanceUI();
+
 var newTrade = {
 id: Date.now(),
-symbol: "BTCUSDT",
 side: side,
-leverage: parseInt(leverageText),
-margin: margin,
-entryPrice: currentInrPrice
+leverage: parseInt(lev),
+margin: mgn,
+entry: inrPrice
 };
-var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-positions.push(newTrade);
-localStorage.setItem('openPositions', JSON.stringify(positions));
-renderPositionsTable();
-alert('Successfully opened a ' + side + ' market position!');
+
+var list = JSON.parse(
+localStorage.getItem('openPos')
+) || [];
+list.push(newTrade);
+localStorage.setItem(
+'openPos', 
+JSON.stringify(list)
+);
+
+renderTable();
+alert('Position opened!');
 } catch (err) {
-console.error("Order submission failure logged:", err);
+console.error(err);
 }
 }
-function renderPositionsTable() {
+
+function renderTable() {
 try {
-var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-var tableBody = document.getElementById('positionsTableBody');
-if (!tableBody) return;
-if (positions.length === 0) {
-tableBody.innerHTML = 'No active open positions';
+var list = JSON.parse(
+localStorage.getItem('openPos')
+) || [];
+var body = document.getElementById(
+'posBody'
+);
+if (!body) return;
+
+if (list.length === 0) {
+body.innerHTML = '<tr>' +
+'<td colspan="6" ' +
+'style="text-align:center;">' +
+'No active positions</td>' +
+'</tr>';
 return;
 }
-var htmlRows = '';
-positions.forEach(function(trade) {
-var color = trade.side === 'LONG' ? 'var(--green-text)' : 'var(--red-text)';
-var priceStr = trade.entryPrice.toLocaleString('en-IN', {maximumFractionDigits:2});
-htmlRows += '' + trade.side + '₹' + trade.margin.toLocaleString('en-IN') + '' + trade.leverage + 'x₹' + priceStr + '₹0.00(0.00%)Close';
+
+var rows = '';
+list.forEach(function(trade) {
+var cls = trade.side === 'LONG' ? 
+'var(--gtxt)' : 'var(--rtxt)';
+var entStr = trade.entry
+.toLocaleString(
+'en-IN', 
+{maximumFractionDigits:2}
+);
+
+rows += '<tr>' +
+'<td style="font-weight:bold;' +
+'color:' + cls + ';">' + 
+trade.side + '</td>' +
+'<td>₹' + trade.margin
+.toLocaleString('en-IN') + 
+'</td>' +
+'<td>' + trade.leverage + 
+'x</td>' +
+'<td>₹' + entStr + '</td>' +
+'<td class="td-pnl" id="pnl-' + 
+trade.id + '">' +
+'<div class="pnl-val">' +
+'₹0.00</div>' +
+'<div class="pnl-pct">' +
+'(0.00%)</div></td>' +
+'<td class="td-act">' +
+'<button class="btn-close" ' +
+'onclick="closePos(' + 
+trade.id + ')">Close' +
+'</button></td>' +
+'</tr>';
 });
-tableBody.innerHTML = htmlRows;
+
+body.innerHTML = rows;
 updateLivePnL();
 } catch (err) {
-console.error("Table structure parsing error caught:", err);
+console.error(err);
 }
 }
-function closePosition(tradeId) {
+
+function closePos(tradeId) {
 try {
-var positions = JSON.parse(localStorage.getItem('openPositions')) || [];
-var tradeIndex = positions.findIndex(function(trade) { return trade.id === tradeId; });
-if (tradeIndex !== -1) {
-var trade = positions[tradeIndex];
-var priceDirectionFactor = (currentInrPrice - trade.entryPrice) / trade.entryPrice;
-if (trade.side === 'SHORT') priceDirectionFactor = -priceDirectionFactor;
-var percentageReturn = priceDirectionFactor * trade.leverage * 100;
-var currencyReturnAmount = trade.margin * (percentageReturn / 100);
-virtualBalance += (trade.margin + currencyReturnAmount);
-localStorage.setItem('crypto_sim_balance', virtualBalance.toString());
+var list = JSON.parse(
+localStorage.getItem('openPos')
+) || [];
+var idx = list.findIndex(
+function(t) { 
+return t.id === tradeId; 
+}
+);
+
+if (idx !== -1) {
+var trade = list[idx];
+var diff = (inrPrice - 
+trade.entry) / trade.entry;
+if (trade.side === 'SHORT') {
+diff = -diff;
+}
+var pct = diff * 
+trade.leverage * 100;
+var amt = trade.margin * 
+(pct / 100);
+
+balance += (trade.margin + amt);
+localStorage.setItem(
+'crypto_sim_bal', 
+balance.toString()
+);
 updateBalanceUI();
-positions.splice(tradeIndex, 1);
-localStorage.setItem('openPositions', JSON.stringify(positions));
-renderPositionsTable();
+
+list.splice(idx, 1);
+localStorage.setItem(
+'openPos', 
+JSON.stringify(list)
+);
+renderTable();
 }
 } catch (e) {
-console.error("Trade finalization error caught:", e);
+console.error(e);
 }
 }
-var savedBalance = localStorage.getItem('crypto_sim_balance');
-if (savedBalance !== null) {
-virtualBalance = parseFloat(savedBalance);
+
+var savedBal = localStorage.getItem(
+'crypto_sim_bal'
+);
+if (savedBal !== null) {
+balance = parseFloat(savedBal);
 } else {
-localStorage.setItem('crypto_sim_balance', virtualBalance.toString());
+localStorage.setItem(
+'crypto_sim_bal', 
+balance.toString()
+);
 }
+
 updateBalanceUI();
-renderPositionsTable();
+renderTable();
 simulateLivePrice();
 setInterval(simulateLivePrice, 1000);
-
+</script>
+</body>
+</html>
