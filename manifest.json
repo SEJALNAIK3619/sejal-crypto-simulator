@@ -7,12 +7,12 @@
   "theme_color": "#161b22",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "https://placeholders.dev",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "./icon-512.png",
+      "src": "https://placeholders.dev",
       "type": "image/png",
       "sizes": "512x512"
     }
