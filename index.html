@@ -2,418 +2,66 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Sim</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sim</title>
 <style>
-:root {
---bg: #0d1117;
---card: #161b22;
---text: #c9d1d9;
---green: #238636;
---gtxt: #00c873;
---red: #da3633;
---rtxt: #ff3b30;
---accent: #58a6ff;
-}
-body {
-font-family: sans-serif;
-background-color: var(--bg);
-color: var(--text);
-margin: 0;
-padding: 15px;
-}
-.header {
-text-align: center;
-padding: 10px 0;
-border-bottom: 1px solid #30363d;
-}
-.balance-card {
-background: var(--card);
-border: 1px solid #30363d;
-border-radius: 8px;
-padding: 20px;
-margin: 15px 0;
-text-align: center;
-}
-.balance-amount {
-font-size: 28px;
-font-weight: bold;
-color: var(--accent);
-}
-.ticker-box {
-background: #21262d;
-padding: 12px;
-border-radius: 6px;
-text-align: center;
-margin-bottom: 20px;
-border-left: 4px solid var(--accent);
-}
-.form-group {
-margin-bottom: 12px;
-}
-label {
-display: block;
-margin-bottom: 5px;
-font-size: 14px;
-}
-select, input {
-width: 100%;
-padding: 10px;
-background: #0d1117;
-border: 1px solid #30363d;
-color: white;
-border-radius: 6px;
-box-sizing: border-box;
-}
-button {
-width: 100%;
-padding: 12px;
-background: var(--green);
-color: white;
-border: none;
-border-radius: 6px;
-font-weight: bold;
-cursor: pointer;
-}
-.positions-card {
-background: var(--card);
-padding: 15px;
-border-radius: 8px;
-border: 1px solid #30363d;
-margin-top: 20px;
-}
-.table-container {
-overflow-x: auto;
-width: 100%;
-margin-top: 10px;
--webkit-overflow-scrolling: touch;
-}
-table {
-width: 100%;
-border-collapse: collapse;
-min-width: 600px;
-}
-th {
-color: #8b949e;
-border-bottom: 1px solid #30363d;
-padding: 8px 6px;
-font-size: 13px;
-white-space: nowrap;
-}
-td {
-padding: 10px 6px;
-border-bottom: 1px solid #21262d;
-font-size: 13px;
-white-space: nowrap;
-}
-.td-pnl {
-text-align: right;
-padding-right: 12px;
-}
-.td-act {
-text-align: right;
-}
-.btn-close {
-padding: 6px 12px;
-background: var(--red);
-color: white;
-border: none;
-border-radius: 4px;
-cursor: pointer;
-font-weight: bold;
-font-size: 12px;
-}
+:root{--bg:#0d1117;--card:#161b22;--text:#c9d1d9;--green:#238636;--gtxt:#00c873;--red:#da3633;--rtxt:#ff3b30;--accent:#58a6ff;}
+body{font-family:sans-serif;background:var(--bg);color:var(--text);margin:0;padding:15px;}
+.header{text-align:center;padding:10px 0;border-bottom:1px solid #30363d;}
+.card-box{background:var(--card);border:1px solid #30363d;border-radius:8px;padding:20px;margin:15px 0;text-align:center;}
+.amt{font-size:28px;font-weight:bold;color:var(--accent);}
+.t-box{background:#21262d;padding:12px;border-radius:6px;text-align:center;margin-bottom:20px;border-left:4px solid var(--accent);font-family:monospace;}
+.f-grp{margin-bottom:12px;}
+label{display:block;margin-bottom:5px;font-size:14px;}
+select,input{width:100%;padding:10px;background:#0d1117;border:1px solid #30363d;color:white;border-radius:6px;box-sizing:border-box;}
+button{width:100%;padding:12px;background:var(--green);color:white;border:none;border-radius:6px;font-weight:bold;cursor:pointer;}
+.t-cont{overflow-x:auto;width:100%;margin-top:10px;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;min-width:650px;}
+th{color:#8b949e;border-bottom:1px solid #30363d;padding:8px 6px;font-size:13px;white-space:nowrap;}
+td{padding:10px 6px;border-bottom:1px solid #21262d;font-size:13px;white-space:nowrap;}
+.r-align{text-align:right;}
+.c-btn{padding:6px 12px;background:var(--red);color:white;border:none;border-radius:4px;cursor:pointer;font-weight:bold;font-size:12px;}
 </style>
 </head>
 <body>
-
-<div class="header">
-<h2>Trading Dashboard</h2>
-</div>
-
-<div class="balance-card">
-<div>Virtual Balance (INR)</div>
-<div id="balanceView" class="balance-amount">₹10,00,000.00</div>
-</div>
-
-<div class="ticker-box">
-Live Feed:<br>
-<strong id="btcPrice" style="color: #eaac30;">Connecting...</strong>
-</div>
-
-<div class="balance-card" style="text-align: left;">
-<h3>Open Order</h3>
-
-<div class="form-group">
-<label>Pair</label>
-<select id="tradeSymbol">
-<option value="BTCUSDT">BTC / USDT</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Side</label>
-<select id="tradeSide">
-<option value="LONG">LONG (Buy)</option>
-<option value="SHORT">SHORT (Sell)</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Leverage</label>
-<select id="tradeLeverage">
-<option value="1">1x</option>
-<option value="5">5x</option>
-<option value="10">10x</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Margin (₹)</label>
-<input type="number" id="tradeMargin" value="10000">
-</div>
-
-<div class="form-group">
-<label>Take Profit Target Price (₹)</label>
-<input type="number" id="tradeTP" value="0">
-</div>
-
-<div class="form-group">
-<label>Stop Loss Target Price (₹)</label>
-<input type="number" id="tradeSL" value="0">
-</div>
-
-<button type="button" onclick="executeOrder()">Submit Order</button>
-</div>
-
-<div class="positions-card">
-<h3>Active Positions</h3>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">Side</th>
-<th style="text-align:left;">Margin</th>
-<th style="text-align:left;">Lev</th>
-<th style="text-align:left;">Entry</th>
-<th style="text-align:left;">TP / SL Targets</th>
-<th style="text-align:right;">PnL</th>
-<th style="text-align:right;">Action</th>
-</tr>
-</thead>
-<tbody id="posBody">
-<tr>
-<td colspan="7" style="text-align:center; color:#8b949e; padding:20px;">No positions</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
+<div class="header"><h2>Dashboard</h2></div>
+<div class="card-box"><div>Balance (INR)</div><div id="balView" class="amt">₹10,00,000.00</div></div>
+<div class="t-box">Live Prices:<br><div id="bPr" style="color:#eaac30;margin-top:4px;">BTC: Load...</div><div id="ePr" style="color:#58a6ff;margin-top:4px;">ETH: Load...</div></div>
+<div class="card-box" style="text-align:left;"><h3>Order</h3>
+<div class="f-grp"><label>Pair</label><select id="tSym"><option value="BTCUSDT">BTC/USDT</option><option value="ETHUSDT">ETH/USDT</option></select></div>
+<div class="f-grp"><label>Side</label><select id="tSide"><option value="LONG">LONG</option><option value="SHORT">SHORT</option></select></div>
+<div class="f-grp"><label>Lev</label><select id="tLev"><option value="1">1x</option><option value="5">5x</option><option value="10">10x</option></select></div>
+<div class="f-grp"><label>Margin (₹)</label><input type="number" id="tMgn" value="10000"></div>
+<div class="f-grp"><label>TP Price (₹)</label><input type="number" id="tTP" value="0"></div>
+<div class="f-grp"><label>SL Price (₹)</label><input type="number" id="tSL" value="0"></div>
+<button type="button" onclick="buy()">Submit</button></div>
+<div class="card-box" style="text-align:left;"><h3>Positions</h3>
+<div class="t-cont"><table><thead><tr><th style="text-align:left;">Pair</th><th style="text-align:left;">Side</th><th style="text-align:left;">Margin</th><th style="text-align:left;">Lev</th><th style="text-align:left;">Entry</th><th style="text-align:left;">TP/SL</th><th class="r-align">PnL</th><th class="r-align">Action</th></tr></thead>
+<tbody id="pBody"><tr><td colspan="8" style="text-align:center;color:#8b949e;padding:20px;">No positions</td></tr></tbody></table></div></div>
 <script>
-var usdPrice = 86519.61; 
-var inrPrice = usdPrice * 83;
-var balance = 1000000.00;
-
-function updateBalanceUI() {
-var view = document.getElementById('balanceView');
-if (view) {
-view.innerText = '₹' + balance.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-}
-}
-
-function simulateLivePrice() {
-try {
-var change = (Math.random() - 0.5) * 0.001;
-usdPrice = usdPrice * (1 + change);
-inrPrice = usdPrice * 83;
-
-var lbl = document.getElementById('btcPrice');
-if (lbl) {
-lbl.innerText = 'BTC: ₹' + inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' ($' + usdPrice.toFixed(2) + ')';
-}
-checkTriggers();
-updateLivePnL();
-} catch (error) {
-console.error(error);
-}
-}
-
-function checkTriggers() {
-try {
-var list = JSON.parse(localStorage.getItem('openPos')) || [];
-var hits = [];
-list.forEach(function(t) {
-var tp = t.tp > 0;
-var sl = t.sl > 0;
-var l = t.side === 'LONG';
-var s = t.side === 'SHORT';
-
-var hitTP = (tp && ((l && inrPrice >= t.tp) || (s && inrPrice <= t.tp)));
-var hitSL = (sl && ((l && inrPrice <= t.sl) || (s && inrPrice >= t.sl)));
-
-if (hitTP || hitSL) {
-hits.push(t.id);
-}
-});
-hits.forEach(function(id) {
-closePos(id, true);
-});
-} catch(e) {
-console.error(e);
-}
-}
-
-function updateLivePnL() {
-try {
-var list = JSON.parse(localStorage.getItem('openPos')) || [];
-list.forEach(function(trade) {
-var cell = document.getElementById('pnl-' + trade.id);
-if (!cell) return;
-
-var vDiv = cell.querySelector('.pnl-val');
-var pDiv = cell.querySelector('.pnl-pct');
-
-var diff = (inrPrice - trade.entry) / trade.entry;
-if (trade.side === 'SHORT') {
-diff = -diff;
-}
-
-var pct = diff * trade.leverage * 100;
-var amt = trade.margin * (pct / 100);
-
-var win = amt >= 0;
-cell.style.color = win ? "var(--gtxt)" : "var(--rtxt)";
-
-var sign = win ? "+" : "";
-if (vDiv) vDiv.innerText = sign + '₹' + amt.toFixed(2);
-if (pDiv) pDiv.innerText = '(' + sign + pct.toFixed(2) + '%)';
-});
-} catch (e) {
-console.error(e);
-}
-}
-
-function executeOrder() {
-try {
-var side = document.getElementById('tradeSide').value;
-var lev = document.getElementById('tradeLeverage').value;
-var mgn = parseFloat(document.getElementById('tradeMargin').value);
-var tpVal = parseFloat(document.getElementById('tradeTP').value) || 0;
-var slVal = parseFloat(document.getElementById('tradeSL').value) || 0;
-
-if (isNaN(mgn) || mgn <= 0) {
-alert("Invalid margin");
-return;
-}
-if (mgn > balance) {
-alert("Insufficient balance");
-return;
-}
-
-balance -= mgn;
-localStorage.setItem('crypto_sim_bal', balance.toString());
-updateBalanceUI();
-
-var newTrade = {
-id: Date.now(),
-side: side,
-leverage: parseInt(lev),
-margin: mgn,
-entry: inrPrice,
-tp: tpVal,
-sl: slVal
-};
-
-var list = JSON.parse(localStorage.getItem('openPos')) || [];
-list.push(newTrade);
-localStorage.setItem('openPos', JSON.stringify(list));
-
-renderTable();
-alert('Position opened!');
-} catch (err) {
-console.error(err);
-}
-}
-
-function renderTable() {
-try {
-var list = JSON.parse(localStorage.getItem('openPos')) || [];
-var body = document.getElementById('posBody');
-if (!body) return;
-
-if (list.length === 0) {
-body.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#8b949e; padding:20px;">No active positions</td></tr>';
-return;
-}
-
-var rows = '';
-list.forEach(function(t) {
-var cls = t.side === 'LONG' ? 'var(--gtxt)' : 'var(--rtxt)';
-var entStr = t.entry.toLocaleString('en-IN', {maximumFractionDigits:2});
-var tpStr = t.tp > 0 ? 'TP: ₹' + t.tp.toLocaleString('en-IN') : 'TP: None';
-var slStr = t.sl > 0 ? 'SL: ₹' + t.sl.toLocaleString('en-IN') : 'SL: None';
-
-rows += '<tr>' +
-'<td style="font-weight:bold; color:' + cls + '; text-align:left;">' + t.side + '</td>' +
-'<td style="text-align:left;">₹' + t.margin.toLocaleString('en-IN') + '</td>' +
-'<td style="text-align:left;">' + t.leverage + 'x</td>' +
-'<td style="text-align:left;">₹' + entStr + '</td>' +
-'<td style="text-align:left; font-size:11px; color:#8b949e;"><div>' + tpStr + '</div><div>' + slStr + '</div></td>' +
-'<td class="td-pnl" id="pnl-' + t.id + '"><div class="pnl-val">₹0.00</div><div class="pnl-pct">(0.00%)</div></td>' +
-'<td class="td-act"><button class="btn-close" onclick="closePos(' + t.id + ', false)">Close</button></td>' +
-'</tr>';
-});
-
-body.innerHTML = rows;
-updateLivePnL();
-} catch (err) {
-console.error(err);
-}
-}
-
-function closePos(tradeId, auto) {
-try {
-var list = JSON.parse(localStorage.getItem('openPos')) || [];
-var idx = list.findIndex(function(t) { return t.id === tradeId; });
-
-if (idx !== -1) {
-var trade = list[idx];
-var diff = (inrPrice - trade.entry) / trade.entry;
-if (trade.side === 'SHORT') {
-diff = -diff;
-}
-var pct = diff * trade.leverage * 100;
-var amt = trade.margin * (pct / 100);
-
-balance += (trade.margin + amt);
-localStorage.setItem('crypto_sim_bal', balance.toString());
-updateBalanceUI();
-
-list.splice(idx, 1);
-localStorage.setItem('openPos', JSON.stringify(list));
-renderTable();
-
-if (auto) {
-alert('Position auto-closed by TP / SL target trigger!');
-}
-}
-} catch (e) {
-console.error(e);
-}
-}
-
-var savedBal = localStorage.getItem('crypto_sim_bal');
-if (savedBal !== null) {
-balance = parseFloat(savedBal);
-} else {
-localStorage.setItem('crypto_sim_bal', balance.toString());
-}
-
-updateBalanceUI();
-renderTable();
-simulateLivePrice();
-setInterval(simulateLivePrice, 1000);
+var px={BTCUSDT:{u:86519.61,i:86519.61*83},ETHUSDT:{u:2610.45,i:2610.45*83}};var bal=1000000.00;
+function upBal(){var v=document.getElementById('balView');if(v){v.innerText='₹'+bal.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}}
+function tick(){try{var bc=(Math.random()-0.5)*0.001;px.BTCUSDT.u*=(1+bc);px.BTCUSDT.i=px.BTCUSDT.u*83;var ec=(Math.random()-0.5)*0.0015;px.ETHUSDT.u*=(1+ec);px.ETHUSDT.i=px.ETHUSDT.u*83;
+var bL=document.getElementById('bPr');if(bL){bL.innerText='BTC: ₹'+px.BTCUSDT.i.toLocaleString('en-IN',{maximumFractionDigits:2})+' ($'+px.BTCUSDT.u.toFixed(2)+')';}
+var eL=document.getElementById('ePr');if(eL){eL.innerText='ETH: ₹'+px.ETHUSDT.i.toLocaleString('en-IN',{maximumFractionDigits:2})+' ($'+px.ETHUSDT.u.toFixed(2)+')';}
+chk();upPnL();}catch(err){console.error(err);}}
+function chk(){try{var list=JSON.parse(localStorage.getItem('oPos'))||[];var hits=[];list.forEach(function(t){var p=px[t.s].i;var tp=t.tp>0;var sl=t.sl>0;var l=t.d==='LONG';var s=t.d==='SHORT';
+var hTP=(tp&&((l&&p>=t.tp)||(s&&p<=t.tp)));var hSL=(sl&&((l&&p<=t.sl)||(s&&p>=t.sl)));if(hTP||hSL){hits.push(t.id);}});hits.forEach(function(id){cut(id,true);});}catch(e){console.error(e);}}
+function upPnL(){try{var list=JSON.parse(localStorage.getItem('oPos'))||[];list.forEach(function(t){var c=document.getElementById('pnl-'+t.id);if(!c)return;var vD=c.querySelector('.pnl-v');var pD=c.querySelector('.pnl-p');
+var p=px[t.s].i;var df=(p-t.e)/t.e;if(t.d==='SHORT'){df=-df;}var pct=df*t.v*100;var amt=t.m*(pct/100);var w=amt>=0;c.style.color=w?"var(--gtxt)":"var(--rtxt)";var s=w?"+":"";
+if(vD)vD.innerText=s+'₹'+amt.toFixed(2);if(pD)pD.innerText='('+s+pct.toFixed(2)+'%)';});}catch(e){console.error(e);}}
+function buy(){try{var sym=document.getElementById('tSym').value;var side=document.getElementById('tSide').value;var lev=document.getElementById('tLev').value;var mgn=parseFloat(document.getElementById('tMgn').value);
+var tpV=parseFloat(document.getElementById('tTP').value)||0;var slV=parseFloat(document.getElementById('tSL').value)||0;if(isNaN(mgn)||mgn<=0){alert("Error");return;}if(mgn>bal){alert("No funds");return;}
+bal-=mgn;localStorage.setItem('c_sim_b',bal.toString());upBal();var nt={id:Date.now(),s:sym,d:side,v:parseInt(lev),m:mgn,e:px[sym].i,tp:tpV,sl:slV};var list=JSON.parse(localStorage.getItem('oPos'))||[];
+list.push(nt);localStorage.setItem('oPos',JSON.stringify(list));draw();alert('Opened');}catch(err){console.error(err);}}
+function draw(){try{var list=JSON.parse(localStorage.getItem('oPos'))||[];var b=document.getElementById('pBody');if(!b)return;if(list.length===0){b.innerHTML='<tr><td colspan="8" style="text-align:center;color:#8b949e;padding:20px;">No positions</td></tr>';return;}
+var rows='';list.forEach(function(t){var cls=t.d==='LONG'?'var(--gtxt)':'var(--rtxt)';var eS=t.e.toLocaleString('en-IN',{maximumFractionDigits:2});var tpS=t.tp>0?'TP: ₹'+t.tp.toLocaleString('en-IN'):'TP: None';
+var slS=t.sl > 0?'SL: ₹'+t.sl.toLocaleString('en-IN'):'SL: None';rows+='<tr><td>'+t.s.replace("USDT","")+'</td><td style="font-weight:bold;color:'+cls+';">'+t.d+'</td><td>₹'+t.m.toLocaleString('en-IN')+'</td><td>'+t.v+'x</td><td>₹'+eS+'</td><td style="font-size:11px;color:#8b949e;"><div>'+tpS+'</div><div>'+slS+'</div></td><td class="r-align" id="pnl-'+t.id+'"><div class="pnl-v">₹0.00</div><div class="pnl-p">(0.00%)</div></td><td class="r-align"><button class="c-btn" onclick="cut('+t.id+',false)">Close</button></td></tr>';});
+b.innerHTML=rows;upPnL();}catch(err){console.error(err);}}
+function cut(id,auto){try{var list=JSON.parse(localStorage.getItem('oPos'))||[];var idx=list.findIndex(function(t){return t.id===id;});if(idx!==-1){var t=list[idx];var p=px[t.s].i;var df=(p-t.e)/t.e;if(t.d==='SHORT'){df=-df;}
+var pct=df*t.v*100;var amt=t.m*(pct/100);bal+=(t.m+amt);localStorage.setItem('c_sim_b',bal.toString());upBal();list.splice(idx,1);localStorage.setItem('oPos',JSON.stringify(list));draw();if(auto){alert('Triggered');}}}catch(e){console.error(e);}}
+var sb=localStorage.getItem('c_sim_b');if(sb!==null){bal=parseFloat(sb);}else{localStorage.setItem('c_sim_b',bal.toString());}
+upBal();draw();tick();setInterval(tick,1000);
 </script>
 </body>
 </html>
