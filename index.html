@@ -82,7 +82,6 @@ border-radius: 8px;
 border: 1px solid #30363d;
 margin-top: 20px;
 }
-/* Enhanced Scrollable Container for Compact Mobile Screens */
 .table-container {
 overflow-x: auto;
 width: 100%;
@@ -92,7 +91,7 @@ margin-top: 10px;
 table {
 width: 100%;
 border-collapse: collapse;
-min-width: 500px; /* Forces stable column spacing on narrow viewports */
+min-width: 600px;
 }
 th {
 color: #8b949e;
@@ -129,7 +128,7 @@ font-size: 12px;
 <body>
 
 <div class="header">
-<h2>Raksha Trading Dashboard</h2>
+<h2>Trading Dashboard</h2>
 </div>
 
 <div class="balance-card">
@@ -174,6 +173,16 @@ Live Feed:<br>
 <input type="number" id="tradeMargin" value="10000">
 </div>
 
+<div class="form-group">
+<label>Take Profit Target Price (₹)</label>
+<input type="number" id="tradeTP" value="0">
+</div>
+
+<div class="form-group">
+<label>Stop Loss Target Price (₹)</label>
+<input type="number" id="tradeSL" value="0">
+</div>
+
 <button type="button" onclick="executeOrder()">Submit Order</button>
 </div>
 
@@ -187,13 +196,14 @@ Live Feed:<br>
 <th style="text-align:left;">Margin</th>
 <th style="text-align:left;">Lev</th>
 <th style="text-align:left;">Entry</th>
+<th style="text-align:left;">TP / SL Targets</th>
 <th style="text-align:right;">PnL</th>
 <th style="text-align:right;">Action</th>
 </tr>
 </thead>
 <tbody id="posBody">
 <tr>
-<td colspan="6" style="text-align:center; color:#8b949e; padding:20px;">No positions</td>
+<td colspan="7" style="text-align:center; color:#8b949e; padding:20px;">No positions</td>
 </tr>
 </tbody>
 </table>
@@ -222,9 +232,35 @@ var lbl = document.getElementById('btcPrice');
 if (lbl) {
 lbl.innerText = 'BTC: ₹' + inrPrice.toLocaleString('en-IN', {maximumFractionDigits:2}) + ' ($' + usdPrice.toFixed(2) + ')';
 }
+checkTriggers();
 updateLivePnL();
 } catch (error) {
 console.error(error);
+}
+}
+
+function checkTriggers() {
+try {
+var list = JSON.parse(localStorage.getItem('openPos')) || [];
+var hits = [];
+list.forEach(function(t) {
+var tp = t.tp > 0;
+var sl = t.sl > 0;
+var l = t.side === 'LONG';
+var s = t.side === 'SHORT';
+
+var hitTP = (tp && ((l && inrPrice >= t.tp) || (s && inrPrice <= t.tp)));
+var hitSL = (sl && ((l && inrPrice <= t.sl) || (s && inrPrice >= t.sl)));
+
+if (hitTP || hitSL) {
+hits.push(t.id);
+}
+});
+hits.forEach(function(id) {
+closePos(id, true);
+});
+} catch(e) {
+console.error(e);
 }
 }
 
@@ -263,6 +299,8 @@ try {
 var side = document.getElementById('tradeSide').value;
 var lev = document.getElementById('tradeLeverage').value;
 var mgn = parseFloat(document.getElementById('tradeMargin').value);
+var tpVal = parseFloat(document.getElementById('tradeTP').value) || 0;
+var slVal = parseFloat(document.getElementById('tradeSL').value) || 0;
 
 if (isNaN(mgn) || mgn <= 0) {
 alert("Invalid margin");
@@ -282,7 +320,9 @@ id: Date.now(),
 side: side,
 leverage: parseInt(lev),
 margin: mgn,
-entry: inrPrice
+entry: inrPrice,
+tp: tpVal,
+sl: slVal
 };
 
 var list = JSON.parse(localStorage.getItem('openPos')) || [];
@@ -303,33 +343,36 @@ var body = document.getElementById('posBody');
 if (!body) return;
 
 if (list.length === 0) {
-body.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#8b949e; padding:20px;">No active positions</td></tr>';
+body.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#8b949e; padding:20px;">No active positions</td></tr>';
 return;
 }
 
 var rows = '';
-list.forEach(function(trade) {
-var cls = trade.side === 'LONG' ? 'var(--gtxt)' : 'var(--rtxt)';
-var entStr = trade.entry.toLocaleString('en-IN', {maximumFractionDigits:2});
+list.forEach(function(t) {
+var cls = t.side === 'LONG' ? 'var(--gtxt)' : 'var(--rtxt)';
+var entStr = t.entry.toLocaleString('en-IN', {maximumFractionDigits:2});
+var tpStr = t.tp > 0 ? 'TP: ₹' + t.tp.toLocaleString('en-IN') : 'TP: None';
+var slStr = t.sl > 0 ? 'SL: ₹' + t.sl.toLocaleString('en-IN') : 'SL: None';
 
 rows += '<tr>' +
-'<td style="font-weight:bold; color:' + cls + '; text-align:left;">' + trade.side + '</td>' +
-'<td style="text-align:left;">₹' + trade.margin.toLocaleString('en-IN') + '</td>' +
-'<td style="text-align:left;">' + trade.leverage + 'x</td>' +
+'<td style="font-weight:bold; color:' + cls + '; text-align:left;">' + t.side + '</td>' +
+'<td style="text-align:left;">₹' + t.margin.toLocaleString('en-IN') + '</td>' +
+'<td style="text-align:left;">' + t.leverage + 'x</td>' +
 '<td style="text-align:left;">₹' + entStr + '</td>' +
-'<td class="td-pnl" id="pnl-' + trade.id + '"><div class="pnl-val">₹0.00</div><div class="pnl-pct">(0.00%)</div></td>' +
-'<td class="td-act"><button class="btn-close" onclick="closePos(' + trade.id + ')">Close</button></td>' +
+'<td style="text-align:left; font-size:11px; color:#8b949e;"><div>' + tpStr + '</div><div>' + slStr + '</div></td>' +
+'<td class="td-pnl" id="pnl-' + t.id + '"><div class="pnl-val">₹0.00</div><div class="pnl-pct">(0.00%)</div></td>' +
+'<td class="td-act"><button class="btn-close" onclick="closePos(' + t.id + ', false)">Close</button></td>' +
 '</tr>';
 });
 
 body.innerHTML = rows;
 updateLivePnL();
 } catch (err) {
-  console.error(err);
+console.error(err);
 }
 }
 
-function closePos(tradeId) {
+function closePos(tradeId, auto) {
 try {
 var list = JSON.parse(localStorage.getItem('openPos')) || [];
 var idx = list.findIndex(function(t) { return t.id === tradeId; });
@@ -350,6 +393,10 @@ updateBalanceUI();
 list.splice(idx, 1);
 localStorage.setItem('openPos', JSON.stringify(list));
 renderTable();
+
+if (auto) {
+alert('Position auto-closed by TP / SL target trigger!');
+}
 }
 } catch (e) {
 console.error(e);
@@ -369,4 +416,4 @@ simulateLivePrice();
 setInterval(simulateLivePrice, 1000);
 </script>
 </body>
-  </html>
+</html>
