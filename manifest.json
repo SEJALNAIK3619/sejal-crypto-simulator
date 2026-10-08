@@ -1,21 +1,42 @@
 {
   "name": "Sejal Crypto Simulator",
   "short_name": "CryptoSim",
+  "description": "An advanced mobile crypto simulator featuring live isolated balances and simulated order executions.",
   "start_url": "/sejal-crypto-simulator/index.html",
   "scope": "/sejal-crypto-simulator/",
   "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["finance", "utilities"],
   "background_color": "#0d1117",
   "theme_color": "#161b22",
   "icons": [
     {
       "src": "https://placeholders.dev",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "https://placeholders.dev",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://placeholders.dev",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Crypto Simulator Dashboard View"
+    },
+    {
+      "src": "https://placeholders.dev",
+      "sizes": "1024x576",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Crypto Simulator Trading Desk Interface"
     }
   ]
 }
