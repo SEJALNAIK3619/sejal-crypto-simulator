@@ -108,47 +108,73 @@ if ('serviceWorker' in navigator) {
   // ==========================================
 // NETWORK LIFECYCLE MONITOR (OFFLINE POPUP)
 // ==========================================
-function updateNetworkStatusLifecycle() {
-  const existingAlert = document.getElementById('offline-network-popup');
+// ==========================================
+// FORCE-OVERLAY NETWORK FIREWALL (OFFLINE CAPTURE)
+// ==========================================
+function enforceStrictNetworkLifecycle() {
+  const modalId = "global-offline-firewall-overlay";
+  let networkOverlay = document.getElementById(modalId);
 
   if (!navigator.onLine) {
-    // If the user goes offline and the popup doesn't exist yet, inject it
-    if (!existingAlert) {
-      const popup = document.createElement('div');
-      popup.id = 'offline-network-popup';
-      popup.style = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#ff7b72; color:#ffffff; padding:12px 24px; border-radius:30px; font-family:sans-serif; font-size:14px; font-weight:bold; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:999999; display:flex; align-items:center; gap:8px; border:1px solid #ff9e96; animation: slideUpNetwork 0.3s ease-out;";
-      popup.innerHTML = `<span>⚠️ Out of Connection</span>`;
+    // 1. If user drops connection and the block overlay doesn't exist, build it instantly
+    if (!networkOverlay) {
+      networkOverlay = document.createElement('div');
+      networkOverlay.id = modalId;
       
-      // Add smooth entry animation style keyframes directly into document head
-      if (!document.getElementById('network-animation-style')) {
-        const style = document.createElement('style');
-        style.id = 'network-animation-style';
-        style.innerHTML = "@keyframes slideUpNetwork { from { bottom: -50px; opacity:0; } to { bottom: 20px; opacity:1; } }";
-        document.head.appendChild(style);
+      // Fullscreen layout configuration completely blocking underlying interaction layers
+      networkOverlay.style.position = "fixed";
+      networkOverlay.style.top = "0";
+      networkOverlay.style.left = "0";
+      networkOverlay.style.width = "100vw";
+      networkOverlay.style.height = "100vh";
+      networkOverlay.style.background = "#0d1117";
+      networkOverlay.style.color = "#ffffff";
+      networkOverlay.style.zIndex = "9999999"; 
+      networkOverlay.style.display = "flex";
+      networkOverlay.style.flexDirection = "column";
+      networkOverlay.style.alignItems = "center";
+      networkOverlay.style.justifyContent = "center";
+      networkOverlay.style.fontFamily = "sans-serif";
+      networkOverlay.style.textAlign = "center";
+      networkOverlay.style.padding = "20px";
+      networkOverlay.style.boxSizing = "border-box";
+      
+      networkOverlay.innerHTML = `
+        <div style="max-width: 400px; padding: 30px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; box-shadow: 0px 10px 30px rgba(0,0,0,0.6);">
+          <div style="font-size: 55px; margin-bottom: 15px; animation: networkPulse 1.5s infinite ease-in-out;">🌐</div>
+          <h2 style="margin: 0 0 10px 0; color: #ff7b72; font-size: 22px;">Out of Connection</h2>
+          <p style="color: #8b949e; font-size: 14px; line-height: 1.5; margin: 0;">Your live simulation data stream has paused. Please restore your internet network or cellular connection to resume market execution operations.</p>
+        </div>
+      `;
+
+      // Inject functional keyframe animations to give a polished application diagnostic feel
+      if (!document.getElementById('firewall-pulse-css')) {
+        const styleSheet = document.createElement('style');
+        styleSheet.id = 'firewall-pulse-css';
+        styleSheet.innerHTML = "@keyframes networkPulse { 0% { opacity: 0.4; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.4; transform: scale(0.95); } }";
+        document.head.appendChild(styleSheet);
       }
-      
-      document.body.appendChild(popup);
+
+      document.body.appendChild(networkOverlay);
     }
   } else {
-    // If the user comes back online, remove the popup smoothly
-    if (existingAlert) {
-      existingAlert.style.background = "#56d364";
-      existingAlert.style.border = "1px solid #7ee787";
-      existingAlert.innerHTML = `<span>✅ Connection Restored</span>`;
-      setTimeout(() => {
-        const alertToRemove = document.getElementById('offline-network-popup');
-        if (alertToRemove) alertToRemove.remove();
-      }, 2000); // Leaves a success banner for 2 seconds before vanishing
+    // 2. If connection is perfectly stable, scrub any blocking element off the layout
+    if (networkOverlay) {
+      networkOverlay.remove();
     }
   }
 }
 
-// Attach native browser listeners to catch immediate network drop events instantly
-window.addEventListener('online', updateNetworkStatusLifecycle);
-window.addEventListener('offline', updateNetworkStatusLifecycle);
+// Bind direct global runtime environmental listeners
+window.addEventListener('online', enforceStrictNetworkLifecycle);
+window.addEventListener('offline', enforceStrictNetworkLifecycle);
 
-// Execute verification pass immediately on application boot sequence
-updateNetworkStatusLifecycle();
+// Continually poll the check to act as a fallback safety net if events don't fire properly
+setInterval(enforceStrictNetworkLifecycle, 1500);
+
+// Initialize baseline scan on application launch sequence execution
+enforceStrictNetworkLifecycle();
+;
 
 </script> 
 </body> 
