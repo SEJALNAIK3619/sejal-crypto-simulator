@@ -1,8 +1,8 @@
 {
   "name": "Sejal Crypto Simulator",
   "short_name": "CryptoSim",
-  "start_url": ".",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "description": "A lightweight client-side cryptocurrency leverage trading simulator.",
@@ -14,16 +14,16 @@
   ],
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "https://jsdelivr.net",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://jsdelivr.net",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }
