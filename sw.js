@@ -1,10 +1,9 @@
-const CACHE_NAME = 'crypto-sim-v2';
+const CACHE_NAME = 'crypto-sim-v4';
 const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  '/',
+  '/index.html',
+  '/manifest.json',
+  'https://jsdelivr.net'
 ];
 
 self.addEventListener('install', (e) => {
