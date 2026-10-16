@@ -2,10 +2,9 @@ const CACHE_NAME = 'crypto-sim-v1';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './manifest.json'
 ];
+
 
 // Install Service Worker and Cache Assets Offline
 self.addEventListener('install', (e) => {
