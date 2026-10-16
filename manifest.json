@@ -1,29 +1,24 @@
 {
-  "name": "Sejal Crypto Simulator",
-  "short_name": "CryptoSim",
-  "start_url": "/",
-  "scope": "/",
-  "display": "standalone",
-  "orientation": "portrait",
-  "description": "A lightweight client-side cryptocurrency leverage trading simulator.",
-  "background_color": "#0d1117",
-  "theme_color": "#161b22",
-  "categories": [
-    "finance",
-    "utilities"
-  ],
+  "short_name": "SejalCrypto",
+  "name": "Sejal Crypto Leverage Simulator",
+  "description": "Client-side cryptocurrency leverage trading simulator.",
   "icons": [
     {
-      "src": "https://jsdelivr.net",
-      "sizes": "192x192",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwZjE3MmEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFlMjkzYiIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImFjY2VudEdyYWQiIHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMTBiOTgxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNmI2ZDQiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNiZ0dyYWQpIi8+CiAgPHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iNDg4IiBoZWlnaHQ9IjQ4OCIgcng9IjEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjQiIG9wYWNpdHk9IjAuNSIvPgogIDxsaW5lIHgxPSIxODAiIHkxPSIyODAiIHgyPSIxODAiIHkyPSI0MDAiIHN0cm9rZT0iI2VmNDQ0NCIgc3Ryb2tlLXdpZHRoPSI2IiBvcGFjaXR5PSIwLjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxyZWN0IHg9IjE1NSIgeT0iMzEwIiB3aWR0aD0iNTAiIGhlaWdodD0iNjAiIHJ4PSI2IiBmaWxsPSIjZWY0NDQ0IiBvcGFjaXR5PSIwLjMiLz4KICA8bGluZSB4MT0iMzQwIiB5MT0iMTIwIiB4Mj0iMzQwIiB5Mj0iMzIwIiBzdHJva2U9InVybCgjYWNjZW50R3JhZCkiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHJlY3QgeD0iMzE1IiB5PSIxNjAiIHdpZHRoPSI1MCIgaGVpZ2h0PSIxMTAiIHJ4PSI4IiBmaWxsPSJ1cmwoI2FjY2VudEdyYWQpIi8+CiAgPHBhdGggZD0iTSAxMjAgMzgwUSAyMjAgMzYwIDI4MCAyNDAgVCA0MjAgMTAwIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjYWNjZW50R3JhZCkiIHN0cm9rZS13aWR0aD0iMTQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0gMjgwIDE4MCBDIDIzMCAxODAgMjIwIDIxMCAyMjAgMjMwIEMgMjIwIDI2MCAyNTAgMjY1IDI3MCAyNzUgQyAzMDAgMjg1IDMxMCAzMDUgMzEwIDMzMCBDIDMxMCAzNjAgMjgwIDM4MCAyMzAgMzgwIE0gMjUwIDE4MCBMIDI1MCAxNTAgTSAyODAgNDEwIEwgMjgwIDM4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjE2IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+",
       "type": "image/svg+xml",
+      "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "https://jsdelivr.net",
-      "sizes": "512x512",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwZjE3MmEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzFlMjkzYiIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImFjY2VudEdyYWQiIHgxPSIwJSIgeTE9IjEwMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMTBiOTgxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwNmI2ZDQiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjExMiIgZmlsbD0idXJsKCNiZ0dyYWQpIi8+CiAgPHJlY3QgeD0iMTIiIHk9IjEyIiB3aWR0aD0iNDg4IiBoZWlnaHQ9IjQ4OCIgcng9IjEwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzM0MTU1IiBzdHJva2Utd2lkdGg9IjQiIG9wYWNpdHk9IjAuNSIvPgogIDxsaW5lIHgxPSIxODAiIHkxPSIyODAiIHgyPSIxODAiIHkyPSI0MDAiIHN0cm9rZT0iI2VmNDQ0NCIgc3Ryb2tlLXdpZHRoPSI2IiBvcGFjaXR5PSIwLjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxyZWN0IHg9IjE1NSIgeT0iMzEwIiB3aWR0aD0iNTAiIGhlaWdodD0iNjAiIHJ4PSI2IiBmaWxsPSIjZWY0NDQ0IiBvcGFjaXR5PSIwLjMiLz4KICA8bGluZSB4MT0iMzQwIiB5MT0iMTIwIiB4Mj0iMzQwIiB5Mj0iMzIwIiBzdHJva2U9InVybCgjYWNjZW50R3JhZCkiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHJlY3QgeD0iMzE1IiB5PSIxNjAiIHdpZHRoPSI1MCIgaGVpZ2h0PSIxMTAiIHJ4PSI4IiBmaWxsPSJ1cmwoI2FjY2VudEdyYWQpIi8+CiAgPHBhdGggZD0iTSAxMjAgMzgwUSAyMjAgMzYwIDI4MCAyNDAgVCA0MjAgMTAwIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjYWNjZW50R3JhZCkiIHN0cm9rZS13aWR0aD0iMTQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0gMjgwIDE4MCBDIDIzMCAxODAgMjIwIDIxMCAyMjAgMjMwIEMgMjIwIDI2MCAyNTAgMjY1IDI3MCAyNzUgQyAzMDAgMjg1IDMxMCAzMDUgMzEwIDMzMCBDIDMxMCAzNjAgMjgwIDM4MCAyMzAgMzgwIE0gMjUwIDE4MCBMIDI1MCAxNTAgTSAyODAgNDEwIEwgMjgwIDM4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjE2IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "display": "standalone",
+  "orientation": "portrait"
 }
